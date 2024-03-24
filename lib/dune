@@ -1,0 +1,12 @@
+(library
+ (name libbpf)
+ (foreign_stubs
+  (name stubs)
+  (language c)
+  (c_flags -lz -lelf -lbpf)))
+
+(rule
+ (target minimal.skel.h)
+ (deps minimal.bpf)
+ (action
+  (run bpftool ))
