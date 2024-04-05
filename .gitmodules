@@ -1,0 +1,3 @@
+[submodule "vendor/libbpf"]
+	path = vendor/libbpf
+	url = git@github.com:libbpf/libbpf.git

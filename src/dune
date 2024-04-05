@@ -1,0 +1,68 @@
+(library
+ (name bpf)
+ (foreign_archives bpf))
+
+; Taken from ocaml-uring/lib/uring/dune
+
+(rule
+ (deps
+  (source_tree %{project_root}/vendor/libbpf))
+ (targets
+  libbpf.a
+  bpf_core_read.h
+  bpf_endian.h
+  bpf.h
+  bpf_helper_defs.h
+  bpf_helpers.h
+  bpf_tracing.h
+  btf.h
+  libbpf_common.h
+  libbpf.h
+  libbpf_legacy.h
+  libbpf_version.h
+  skel_internal.h
+  usdt.bpf.h)
+ (action
+  (no-infer
+   (progn
+    (chdir
+     %{project_root}/vendor/libbpf/src
+     (progn
+      (bash "mkdir build root")
+      (run make BUILD_STATIC_ONLY=y OBJDIR=build DESTDIR=root install)))
+    (copy %{project_root}/vendor/libbpf/src/root/usr/lib64/libbpf.a libbpf.a)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf_core_read.h
+     bpf_core_read.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf_endian.h
+     bpf_endian.h)
+    (copy %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf.h bpf.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf_helper_defs.h
+     bpf_helper_defs.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf_helpers.h
+     bpf_helpers.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/bpf_tracing.h
+     bpf_tracing.h)
+    (copy %{project_root}/vendor/libbpf/src/root/usr/include/bpf/btf.h btf.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/libbpf_common.h
+     libbpf_common.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/libbpf.h
+     libbpf.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/libbpf_legacy.h
+     libbpf_legacy.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/libbpf_version.h
+     libbpf_version.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/skel_internal.h
+     skel_internal.h)
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/include/bpf/usdt.bpf.h
+     usdt.bpf.h)))))
