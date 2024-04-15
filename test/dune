@@ -1,12 +1,10 @@
-(test
- (name test_ocaml_libbpf))
+; (test
+;  (name test_ocaml_libbpf))
 
-
-
-(rule
- (alias tp)
- (mode promote)
- (action
-  (with-stdout-to
-   tp.txt
-   (bash "sudo cat /sys/kernel/debug/tracing/available_events | grep io_uring"))))
+; (rule
+;  (alias tp)
+;  (mode promote)
+;  (action
+;   (with-stdout-to
+;    tp.txt
+;    (bash "sudo cat /sys/kernel/debug/tracing/available_events | grep io_uring"))))

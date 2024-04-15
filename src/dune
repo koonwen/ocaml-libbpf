@@ -1,6 +1,13 @@
 (library
  (name bpf)
- (foreign_archives bpf))
+ (foreign_stubs
+  (names stubs)
+  (language c))
+ (c_library_flags -lelf -lz)
+ (foreign_archives bpf)
+ (inline_tests)
+ (preprocess
+  (pps ppx_deriving.enum ppx_deriving.show ppx_expect)))
 
 ; Taken from ocaml-uring/lib/uring/dune
 

@@ -1,5 +1,7 @@
 (lang dune 3.13)
 
+(using ctypes 0.3)
+
 (name ocaml_libbpf)
 
 (generate_opam_files true)
