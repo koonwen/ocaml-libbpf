@@ -54,6 +54,6 @@ let%expect_test "enums" =
     LIBBPF_ERRNO__INVSEQ = 4012
     LIBBPF_ERRNO__NLPARSE = 4013"]
 
-(* external libbpf_strerror : int -> Buffer.t -> int  = "caml_libbpf_strerror" *)
+external libbpf_strerror : int -> Buffer.t -> nativeint -> int  = "caml_libbpf_strerror"
 (* external libbpf_version_string : unit -> string = "caml_libbpf_version_string" *)
 (* external libbpf_version_string : unit -> string = "caml_libbpf_version_string" *)
