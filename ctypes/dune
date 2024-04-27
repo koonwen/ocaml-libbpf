@@ -19,6 +19,20 @@
   (generated_types Types_generated)
   (generated_entry_point C)))
 
+(data_only_dirs bpf)
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (deps
+  (source_tree bpf))
+ (targets minimal.bpf.o)
+ (action
+  (no-infer
+   (progn
+    (run make -C bpf)
+    (copy bpf/minimal.bpf.o minimal.bpf.o)))))
+
 (rule
  (deps
   (source_tree %{project_root}/vendor/libbpf))
