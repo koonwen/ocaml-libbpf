@@ -36,9 +36,26 @@ module Types (F : Ctypes.TYPE) = struct
       ]
 
   type bpf_object
+  type bpf_program
+  type bpf_link
+  type bpf_map
 
   let bpf_object : bpf_object structure typ = structure "bpf_object"
+  let bpf_program : bpf_program structure typ = structure "bpf_program"
+  let bpf_link : bpf_link structure typ = structure "bpf_link"
+  let bpf_map : bpf_map structure typ = structure "bpf_map"
 
+  type ring_buffer
+  type ring_buffer_opts
+
+  (* typedef int (ring_buffer_sample_fn)(void *ctx, void *data, size_t size); *)
+  let ring_buffer_sample_fn =
+    typedef
+      (static_funptr (ptr void @-> ptr void @-> size_t @-> returning int))
+      "ring_buffer_sample_fn"
+
+  let ring_buffer : ring_buffer structure typ = structure "ring_buffer"
+  let ring_buffer_opts : ring_buffer_opts structure typ = structure "ring_buffer_opts"
 
   (* let ( -: ) ty label = field bpf_object label ty *)
   (* let name = string -: "name" *)
@@ -111,33 +128,34 @@ module Types (F : Ctypes.TYPE) = struct
         ( BPF_CGROUP_INET6_POST_BIND,
           constant "BPF_CGROUP_INET6_POST_BIND" int64_t );
       ]
-      (* BPF_CGROUP_UDP4_SENDMSG, constant "" int64_t; *)
-      (* BPF_CGROUP_UDP6_SENDMSG, constant "" int64_t; *)
-      (* BPF_LIRC_MODE2, constant "" int64_t; *)
-      (* BPF_FLOW_DISSECTOR, constant "" int64_t; *)
-      (* BPF_CGROUP_SYSCTL, constant "" int64_t; *)
-      (* BPF_CGROUP_UDP4_RECVMSG, constant "" int64_t; *)
-      (* BPF_CGROUP_UDP6_RECVMSG, constant "" int64_t; *)
-      (* BPF_CGROUP_GETSOCKOPT, constant "" int64_t; *)
-      (* BPF_CGROUP_SETSOCKOPT, constant "" int64_t; *)
-      (* BPF_TRACE_RAW_TP, constant "" int64_t; *)
-      (* BPF_TRACE_FENTRY, constant "" int64_t; *)
-      (* BPF_TRACE_FEXIT, constant "" int64_t; *)
-      (* BPF_MODIFY_RETURN, constant "" int64_t; *)
-      (* BPF_LSM_MAC, constant "" int64_t; *)
-      (* BPF_TRACE_ITER, constant "" int64_t; *)
-      (* BPF_CGROUP_INET4_GETPEERNAME, constant "" int64_t; *)
-      (* BPF_CGROUP_INET6_GETPEERNAME, constant "" int64_t; *)
-      (* BPF_CGROUP_INET4_GETSOCKNAME, constant "" int64_t; *)
-      (* BPF_CGROUP_INET6_GETSOCKNAME, constant "" int64_t; *)
-      (* BPF_XDP_DEVMAP, constant "" int64_t; *)
-      (* BPF_CGROUP_INET_SOCK_RELEASE, constant "" int64_t; *)
-      (* BPF_XDP_CPUMAP, constant "" int64_t; *)
-      (* BPF_SK_LOOKUP, constant "" int64_t; *)
-      (* BPF_XDP, constant "" int64_t; *)
-      (* BPF_SK_SKB_VERDICT, constant "" int64_t; *)
-      (* BPF_SK_REUSEPORT_SELECT, constant "" int64_t; *)
-      (* BPF_SK_REUSEPORT_SELECT_OR_MIGRATE, constant "" int64_t; *)
-      (* BPF_PERF_EVENT, constant "" int64_t; *)
-      (* BPF_TRACE_KPROBE_MULTI, constant "" int64_t; *)end
+  (* BPF_CGROUP_UDP4_SENDMSG, constant "" int64_t; *)
+  (* BPF_CGROUP_UDP6_SENDMSG, constant "" int64_t; *)
+  (* BPF_LIRC_MODE2, constant "" int64_t; *)
+  (* BPF_FLOW_DISSECTOR, constant "" int64_t; *)
+  (* BPF_CGROUP_SYSCTL, constant "" int64_t; *)
+  (* BPF_CGROUP_UDP4_RECVMSG, constant "" int64_t; *)
+  (* BPF_CGROUP_UDP6_RECVMSG, constant "" int64_t; *)
+  (* BPF_CGROUP_GETSOCKOPT, constant "" int64_t; *)
+  (* BPF_CGROUP_SETSOCKOPT, constant "" int64_t; *)
+  (* BPF_TRACE_RAW_TP, constant "" int64_t; *)
+  (* BPF_TRACE_FENTRY, constant "" int64_t; *)
+  (* BPF_TRACE_FEXIT, constant "" int64_t; *)
+  (* BPF_MODIFY_RETURN, constant "" int64_t; *)
+  (* BPF_LSM_MAC, constant "" int64_t; *)
+  (* BPF_TRACE_ITER, constant "" int64_t; *)
+  (* BPF_CGROUP_INET4_GETPEERNAME, constant "" int64_t; *)
+  (* BPF_CGROUP_INET6_GETPEERNAME, constant "" int64_t; *)
+  (* BPF_CGROUP_INET4_GETSOCKNAME, constant "" int64_t; *)
+  (* BPF_CGROUP_INET6_GETSOCKNAME, constant "" int64_t; *)
+  (* BPF_XDP_DEVMAP, constant "" int64_t; *)
+  (* BPF_CGROUP_INET_SOCK_RELEASE, constant "" int64_t; *)
+  (* BPF_XDP_CPUMAP, constant "" int64_t; *)
+  (* BPF_SK_LOOKUP, constant "" int64_t; *)
+  (* BPF_XDP, constant "" int64_t; *)
+  (* BPF_SK_SKB_VERDICT, constant "" int64_t; *)
+  (* BPF_SK_REUSEPORT_SELECT, constant "" int64_t; *)
+  (* BPF_SK_REUSEPORT_SELECT_OR_MIGRATE, constant "" int64_t; *)
+  (* BPF_PERF_EVENT, constant "" int64_t; *)
+  (* BPF_TRACE_KPROBE_MULTI, constant "" int64_t; *)
+end
 (* BPF_LSM_CGROUP, constant "" int64_t; *)

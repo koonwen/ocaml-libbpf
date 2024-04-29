@@ -8,6 +8,7 @@ module Types = Types_generated
 module Functions (F : Ctypes.FOREIGN) = struct
   open F
 
+  (* ======================================== Generics ======================================== *)
   let libbpf_major_version =
     foreign "libbpf_major_version" (void @-> returning uint32_t)
 
@@ -17,17 +18,72 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let libbpf_strerror =
     foreign "libbpf_strerror" (int @-> ptr char @-> size_t @-> returning int)
 
+  let libbpf_get_error = foreign "libbpf_get_error" (ptr void @-> returning long)
   [@@alert unsafe "does not support flag set"]
+
   let libbpf_set_strict_mode =
-      foreign "libbpf_set_strict_mode" (Types.enum_libbpf_strict_mode @-> returning void)
-
+    foreign "libbpf_set_strict_mode"
+      (Types.enum_libbpf_strict_mode @-> returning void)
   [@@alert unsafe "incomplete implementation"]
-  let libbpf_bpf_attach_type_str =
-    foreign "libbpf_bpf_attach_type_str" (Types.bpf_attach_type @-> returning string)
 
+  let libbpf_bpf_attach_type_str =
+    foreign "libbpf_bpf_attach_type_str"
+      (Types.bpf_attach_type @-> returning string)
+
+  (* ======================================== BPF ======================================== *)
   let bpf_object__open =
     foreign "bpf_object__open" (string @-> returning (ptr_opt Types.bpf_object))
 
   let bpf_object__load =
     foreign "bpf_object__load" (ptr Types.bpf_object @-> returning int)
+
+  (* LIBBPF_API struct bpf_program * bpf_object__find_program_by_name (const struct bpf_object *obj, const char *name) *)
+  let bpf_object__find_program_by_name =
+    foreign "bpf_object__find_program_by_name"
+      (ptr Types.bpf_object @-> string @-> returning (ptr_opt Types.bpf_program))
+
+  let bpf_object__next_program =
+    foreign "bpf_object__next_program"
+      (ptr Types.bpf_object @-> ptr Types.bpf_program
+      @-> returning (ptr Types.bpf_program))
+
+  (* LIBBPF_API struct bpf_link * bpf_program__attach (const struct bpf_program *prog) *)
+  let bpf_program__attach =
+    foreign "bpf_program__attach"
+      (ptr Types.bpf_program @-> returning (ptr Types.bpf_link))
+
+  (* LIBBPF_API struct bpf_map * bpf_object__find_map_by_name (const
+     struct bpf_object *obj, const char *name) *)
+  let bpf_object__find_map_by_name =
+    foreign "bpf_object__find_map_by_name"
+      (ptr Types.bpf_object @-> string @-> returning (ptr_opt Types.bpf_map))
+
+  (* LIBBPF_API int bpf_map__fd (const struct bpf_map *map) *)
+  let bpf_map__fd = foreign "bpf_map__fd" (ptr Types.bpf_map @-> returning int)
+
+  (*  LIBBPF_API int bpf_link__destroy (struct bpf_link *link) *)
+  let bpf_link__destroy =
+    foreign "bpf_link__destroy" (ptr Types.bpf_link @-> returning int)
+
+  (*  LIBBPF_API void bpf_object__close (struct bpf_object *obj) *)
+  let bpf_object__close =
+    foreign "bpf_object__close" (ptr Types.bpf_object @-> returning void)
+
+  (* ======================================== Maps ======================================== *)
+  (* LIBBPF_API struct ring_buffer * ring_buffer__new (int map_fd,
+     ring_buffer_sample_fn sample_cb, void *ctx, const struct
+     ring_buffer_opts *opts) *)
+  let ring_buffer__new =
+    foreign "ring_buffer__new"
+      (int @-> Types.ring_buffer_sample_fn @-> ptr void
+     @-> ptr Types.ring_buffer_opts
+      @-> returning (ptr_opt Types.ring_buffer))
+
+  (* LIBBPF_API int ring_buffer__poll (struct ring_buffer *rb, int timeout_ms) *)
+  let ring_buffer__poll =
+    foreign "ring_buffer__poll" (ptr Types.ring_buffer @-> int @-> returning int)
+
+  (* LIBBPF_API void user_ring_buffer__free (struct user_ring_buffer *rb)*)
+  let ring_buffer__free =
+    foreign "ring_buffer__free" (ptr Types.ring_buffer @-> returning void)
 end

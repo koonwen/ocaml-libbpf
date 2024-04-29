@@ -1,5 +1,6 @@
 (executable
  (name main)
+ (libraries unix ctypes-foreign)
  (foreign_archives bpf)
  (ctypes
   (external_library_name libbpf)
