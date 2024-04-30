@@ -1,6 +1,7 @@
-(executable
- (name main)
- (libraries unix ctypes-foreign)
+(library
+ (name ocaml_libbpf)
+ (public_name ocaml_libbpf)
+ (libraries ctypes-foreign)
  (foreign_archives bpf)
  (ctypes
   (external_library_name libbpf)
@@ -19,20 +20,6 @@
    (functor Function_description))
   (generated_types Types_generated)
   (generated_entry_point C)))
-
-(data_only_dirs bpf)
-
-(rule
- (mode
-  (promote (until-clean)))
- (deps
-  (source_tree bpf))
- (targets minimal.bpf.o)
- (action
-  (no-infer
-   (progn
-    (run make -C bpf)
-    (copy bpf/minimal.bpf.o minimal.bpf.o)))))
 
 (rule
  (deps

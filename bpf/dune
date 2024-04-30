@@ -1,0 +1,18 @@
+; (rule
+;  (mode
+;   (promote (until-clean)))
+;  (targets minimal.bpf.o)
+;  (deps
+;   Makefile
+;   (glob_files *.bpf.c))
+;  (action
+;   (no-infer
+;    (run make))))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (targets minimal.bpf.o)
+ (deps minimal.bpf.c)
+ (action
+  (system "clang -O2 -target bpf -c %{deps}")))

@@ -1,5 +1,5 @@
 (library
- (name bpf)
+ (name bpf_stubs)
  (foreign_stubs
   (names stubs)
   (language c))
