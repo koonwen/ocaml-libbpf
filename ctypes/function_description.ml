@@ -70,6 +70,29 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_object__close" (ptr Types.bpf_object @-> returning void)
 
   (* ======================================== Maps ======================================== *)
+
+  (* LIBBPF_API int bpf_map__lookup_elem(const struct bpf_map *map, *)
+  (*   			    const void *key, size_t key_sz, *)
+  (*   			    void *value, size_t value_sz, __u64 flags); *)
+  let bpf_map__lookup_elem =
+    foreign "bpf_map__lookup_elem"
+      (ptr Types.bpf_map @-> ptr void @-> size_t @-> ptr void @-> size_t
+     @-> uint64_t @-> returning int)
+
+  (* LIBBPF_API int bpf_map__update_elem(const struct bpf_map *map, *)
+  (* 				    const void *key, size_t key_sz, *)
+  (* 				    const void *value, size_t value_sz, __u64 flags); *)
+  let bpf_map__update_elem =
+    foreign "bpf_map__update_elem"
+      (ptr Types.bpf_map @-> ptr void @-> size_t @-> ptr void @-> size_t
+     @-> uint64_t @-> returning int)
+
+  (* LIBBPF_API int bpf_map__delete_elem(const struct bpf_map *map, *)
+  (*   			    const void *key, size_t key_sz, __u64 flags); *)
+  let bpf_map__delete_elem =
+    foreign "bpf_map__delete_elem"
+      (ptr Types.bpf_map @-> ptr void @-> size_t @-> uint64_t @-> returning int)
+
   (* LIBBPF_API struct ring_buffer * ring_buffer__new (int map_fd,
      ring_buffer_sample_fn sample_cb, void *ctx, const struct
      ring_buffer_opts *opts) *)
