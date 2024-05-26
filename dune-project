@@ -13,7 +13,7 @@
 
 (maintainers "Lee Koon Wen")
 
-(license LICENSE)
+(license LGPL-2.1-only)
 
 (documentation https://url/to/documentation)
 
@@ -21,7 +21,7 @@
  (name ocaml_libbpf)
  (synopsis "Libbpf bindings")
  (description "Wrapped libbpf api's for writing BPF user programs in OCaml")
- (depends ocaml dune)
+ (depends ocaml dune ctypes ctypes-foreign ppx_deriving ppx_expect)
  (tags
   (bindings bpf libbpf)))
 
