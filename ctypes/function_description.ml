@@ -93,6 +93,8 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_map__delete_elem"
       (ptr Types.bpf_map @-> ptr void @-> size_t @-> uint64_t @-> returning int)
 
+  (* ====================================== RingBuf ===================================== *)
+
   (* LIBBPF_API struct ring_buffer * ring_buffer__new (int map_fd,
      ring_buffer_sample_fn sample_cb, void *ctx, const struct
      ring_buffer_opts *opts) *)
@@ -105,6 +107,10 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (* LIBBPF_API int ring_buffer__poll (struct ring_buffer *rb, int timeout_ms) *)
   let ring_buffer__poll =
     foreign "ring_buffer__poll" (ptr Types.ring_buffer @-> int @-> returning int)
+
+  (* LIBBPF_API int ring_buffer__consume (struct ring_buffer *rb) *)
+  let ring_buffer__consume =
+    foreign "ring_buffer__consume" (ptr Types.ring_buffer @-> returning int)
 
   (* LIBBPF_API void user_ring_buffer__free (struct user_ring_buffer *rb)*)
   let ring_buffer__free =
