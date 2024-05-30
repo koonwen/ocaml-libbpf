@@ -108,11 +108,33 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let ring_buffer__poll =
     foreign "ring_buffer__poll" (ptr Types.ring_buffer @-> int @-> returning int)
 
-  (* LIBBPF_API int ring_buffer__consume (struct ring_buffer *rb) *)
-  let ring_buffer__consume =
-    foreign "ring_buffer__consume" (ptr Types.ring_buffer @-> returning int)
-
   (* LIBBPF_API void user_ring_buffer__free (struct user_ring_buffer *rb)*)
   let ring_buffer__free =
     foreign "ring_buffer__free" (ptr Types.ring_buffer @-> returning void)
+
+  (* LIBBPF_API int ring_buffer__consume (struct ring_buffer *rb) *)
+  let ring_buffer__consume =
+    foreign "ring_buffer__consume" (ptr Types.ring_buffer @-> returning int)
+  [@@alert version "since LIBBPF_1.3.0"]
+
+  (* LIBBPF_API struct ring *ring_buffer__ring(struct ring_buffer *rb,
+     unsigned int idx); *)
+  let ring_buffer__ring =
+    foreign "ring_buffer__ring" (ptr Types.ring_buffer @-> returning (ptr Types.ring))
+  [@@alert version "since LIBBPF_1.3.0"]
+
+  (* LIBBPF_API unsigned long ring__producer_pos(const struct ring *r); *)
+  let ring__producer_pos =
+    foreign "ring__producer_pos" (ptr Types.ring @-> returning ulong)
+  [@@alert version "since LIBBPF_1.3.0"]
+
+  (* LIBBPF_API unsigned long ring__consumer_pos(const struct ring *r); *)
+  let ring__consumer_pos =
+    foreign "ring__consumer_pos" (ptr Types.ring @-> returning ulong)
+  [@@alert version "since LIBBPF_1.3.0"]
+
+  (* LIBBPF_API size_t ring__avail_data_size(const struct ring *r); *)
+  let ring__avail_data_size =
+    foreign "ring__avail_data_size" (ptr Types.ring @-> returning size_t)
+  [@@alert version "since LIBBPF_1.3.0"]
 end

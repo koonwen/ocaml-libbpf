@@ -45,6 +45,7 @@ module Types (F : Ctypes.TYPE) = struct
   let bpf_link : bpf_link structure typ = structure "bpf_link"
   let bpf_map : bpf_map structure typ = structure "bpf_map"
 
+  type ring
   type ring_buffer
   type ring_buffer_opts
 
@@ -54,6 +55,7 @@ module Types (F : Ctypes.TYPE) = struct
       (static_funptr (ptr void @-> ptr void @-> size_t @-> returning int))
       "ring_buffer_sample_fn"
 
+  let ring : ring structure typ = structure "ring"
   let ring_buffer : ring_buffer structure typ = structure "ring_buffer"
   let ring_buffer_opts : ring_buffer_opts structure typ = structure "ring_buffer_opts"
 

@@ -1,6 +1,6 @@
-; (test
-;  (name test_ocaml_libbpf))
-
+(test
+ (name version)
+(libraries ocaml_libbpf))
 ; (rule
 ;  (alias tp)
 ;  (mode promote)
