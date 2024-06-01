@@ -1,6 +1,16 @@
-(test
- (name version)
-(libraries ocaml_libbpf))
+(tests
+ (deps minimal.bpf.o)
+ (names version maps)
+ (libraries ocaml_libbpf))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (target minimal.bpf.o)
+ (deps %{project_root}/bpf/minimal.bpf.o)
+ (action
+  (copy %{deps} %{target})))
+
 ; (rule
 ;  (alias tp)
 ;  (mode promote)

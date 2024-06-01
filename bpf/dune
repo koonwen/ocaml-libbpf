@@ -15,4 +15,4 @@
  (targets minimal.bpf.o)
  (deps minimal.bpf.c)
  (action
-  (system "clang -O2 -target bpf -c %{deps}")))
+  (system "clang -g -O2 -target bpf -c %{deps}")))

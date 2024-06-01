@@ -1,3 +1,11 @@
 (executables
  (names bootstrap)
  (libraries ocaml_libbpf))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (target minimal.bpf.o)
+ (deps %{project_root}/bpf/minimal.bpf.o)
+ (action
+  (copy %{deps} %{target})))

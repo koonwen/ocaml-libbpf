@@ -36,7 +36,7 @@ endif
 .PHONY: all
 minimal.bpf.o : minimal.bpf.c
 	$(call msg,BPF,$@)
-	$(CLANG) -O2 -target bpf -c minimal.bpf.c
+	$(CLANG) -g -O2 -target bpf -c minimal.bpf.c
 
 .PHONY: clean
 clean:

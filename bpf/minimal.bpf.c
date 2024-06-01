@@ -7,7 +7,13 @@ char LICENSE[] SEC("license") = "Dual BSD/GPL";
 
 int my_pid = 0;
 
-
+/* Globals implemented as an array */
+struct {
+  __uint(type, BPF_MAP_TYPE_ARRAY);
+  __uint(max_entries, 5);
+  __type(key, int);
+  __type(value, long);
+} globals SEC(".maps");
 
 SEC("tp/syscalls/sys_enter_write")
 int handle_tp(void *ctx)
