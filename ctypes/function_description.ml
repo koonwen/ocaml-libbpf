@@ -58,9 +58,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_object__find_map_by_name"
       (ptr Types.bpf_object @-> string @-> returning (ptr_opt Types.bpf_map))
 
-  (* LIBBPF_API int bpf_map__fd (const struct bpf_map *map) *)
-  let bpf_map__fd = foreign "bpf_map__fd" (ptr Types.bpf_map @-> returning int)
-
   (*  LIBBPF_API int bpf_link__destroy (struct bpf_link *link) *)
   let bpf_link__destroy =
     foreign "bpf_link__destroy" (ptr Types.bpf_link @-> returning int)
@@ -70,6 +67,15 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_object__close" (ptr Types.bpf_object @-> returning void)
 
   (* ======================================== Maps ======================================== *)
+
+  (* LIBBPF_API int bpf_map__fd (const struct bpf_map *map) *)
+  let bpf_map__fd = foreign "bpf_map__fd" (ptr Types.bpf_map @-> returning int)
+
+  (* LIBBPF_API int bpf_map__set_initial_value(struct bpf_map *map, *)
+  (*       				  const void *data, size_t size); *)
+  let bpf_map__set_initial_value =
+    foreign "bpf_map__set_initial_value"
+      (ptr Types.bpf_map @-> ptr void @-> ptr void @-> returning int)
 
   (* LIBBPF_API int bpf_map__lookup_elem(const struct bpf_map *map, *)
   (*   			    const void *key, size_t key_sz, *)
@@ -137,4 +143,16 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let ring__avail_data_size =
     foreign "ring__avail_data_size" (ptr Types.ring @-> returning size_t)
   [@@alert version "since LIBBPF_1.3.0"]
+
+  module Bpf = struct
+    (* LIBBPF_API int bpf_map_lookup_elem(int fd, const void *key, void *value); *)
+    let bpf_map_lookup_elem =
+      foreign "bpf_map_lookup_elem" (int @-> ptr void @-> ptr void @-> returning int)
+
+    (*   LIBBPF_API int bpf_map_update_elem(int fd, const void *key, const void *value, *)
+    (* 				   __u64 flags); *)
+    let bpf_map_update_elem =
+      foreign "bpf_map_update_elem" (int @-> ptr void @-> ptr void @-> uint64_t @-> returning int)
+  end
+
 end
