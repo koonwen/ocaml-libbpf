@@ -1,4 +1,4 @@
-module Primatives = struct
+module Primative = struct
   module Types = C.Types
   module Functions = C.Functions
 end

@@ -1,5 +1,5 @@
-module F = Ocaml_libbpf.Libbpf.Functions
-module T = Ocaml_libbpf.Libbpf.Types
+module F = Ocaml_libbpf.Primative.Functions
+module T = Ocaml_libbpf.Primative.Types
 
 exception Exit of int
 

@@ -1,5 +1,5 @@
-module F = Ocaml_libbpf.C.Functions
-module T = Ocaml_libbpf.C.Types
+module F = Ocaml_libbpf.Primative.Functions
+module T = Ocaml_libbpf.Primative.Types
 
 let () =
   let major = F.libbpf_major_version () |> Unsigned.UInt32.to_string in
