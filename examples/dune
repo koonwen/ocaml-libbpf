@@ -1,6 +1,6 @@
 (executables
  (names bootstrap)
- (libraries ocaml_libbpf))
+ (libraries ocaml_libbpf ctypes.foreign))
 
 (rule
  (mode

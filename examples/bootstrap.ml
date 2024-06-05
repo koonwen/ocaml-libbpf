@@ -1,5 +1,5 @@
-module F = Ocaml_libbpf.Primative.Functions
-module T = Ocaml_libbpf.Primative.Types
+module F = Ocaml_libbpf.C.Functions
+module T = Ocaml_libbpf.C.Types
 
 exception Exit of int
 
@@ -39,7 +39,7 @@ let main () =
   in
 
   (* Attach tracepoint *)
-  let link = F.bpf_program__attach prog in
+  let link = F.bpf_program__attach prog |> Option.get in
   if F.libbpf_get_error (Ctypes.to_voidp link) <> Signed.Long.zero then (
     Printf.eprintf "Failed to attach BPF program\n";
     raise (Exit 1));
