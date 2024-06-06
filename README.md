@@ -4,14 +4,15 @@ C-bindings for libbpf for writing type-safe eBPF user programs.
 # TODO
 - [X] Add more low level bindings
 - [X] Add higher level abstraction for interacting with API's
-- [ ] Fix to libbpf.1.0 version
-- [ ] Package properly and find good names
+- [ ] Fix to libbpf.1.0 version (Now 1.4)
+- [X] Package properly and find good names
   - [X] Add dependencies
-  - [ ] Prune useless things
+  - [X] Prune useless things
 
 - [ ] Write integration with bpftool
-- [ ] Write proper examples
+- [X] Write proper examples
 - [ ] Write tests for bindings
+- [ ] Write high level apis for ring buffer usage
 
 # Notes
 libbpf API's provide both userland and kernel API's, when writing

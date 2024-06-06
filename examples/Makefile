@@ -2,8 +2,8 @@ CWD=../_build/default/examples
 
 all: build
 
-minimal: build
-	sudo $(CWD)/minimal.exe
+bootstrap_c: build
+	sudo $(CWD)/bootstrap_c.exe
 
 bootstrap: build
 	sudo $(CWD)/bootstrap.exe

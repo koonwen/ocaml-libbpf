@@ -1,5 +1,4 @@
-(tests
- (deps minimal.bpf.o)
+(executables
  (names version maps)
  (libraries ocaml_libbpf))
 
