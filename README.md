@@ -1,3 +1,5 @@
+[![OCaml-CI Build Status](https://img.shields.io/endpoint?url=https://ocaml.ci.dev/badge/koonwen/ocaml-libbpf/main&logo=ocaml)](https://ocaml.ci.dev/github/koonwen/ocaml-libbpf)
+
 # ocaml-libbpf
 C-bindings for libbpf for writing type-safe eBPF user programs.
 
