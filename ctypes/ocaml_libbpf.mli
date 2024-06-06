@@ -76,18 +76,47 @@ val with_bpf_object_open_load_link :
     if all steps were successful. Ensures all the proper shutdown and
     cleanup of bpf_object resources and links *)
 
-module type Conv = sig
-  type t
+(** Bpf_maps provide a convenient Make functor interface for
+    interacting with your maps. Users just need to provide the
+    underlying c types of their map key and values, *)
+module Bpf_maps : sig
+  module type Conv = sig
+    type t
+    (** The OCaml type mapping the underlying c type in [ty]. Users
+        cannot define arbritrary OCaml types but instead use the
+        appropriate Ctypes interfaces to construct this OCaml type *)
 
-  val c_type : t Ctypes.typ
-  val empty : t
+    val empty : t
+    (** Used for initializing memory during memory allocation. This is
+        a requirement by Ctypes library to have memory initialized to
+        some value *)
+
+    val ty : t Ctypes.typ
+    (** The C value representing the underlying custom c type *)
+  end
+
+  (* Support flags in the future, Need to get kernel headers for
+     this *)
+  (* type flags = *)
+  (*   | BPF_NOEXIST *)
+  (*   | BPF_EXIST *)
+  (*   | BPF_ANY *)
+  (*   (\* Flag value BPF_NOEXIST cannot be used for maps of types *)
+  (*      BPF_MAP_TYPE_ARRAY or BPF_MAP_TYPE_PERCPU_ARRAY (all elements *)
+  (*      always exist), the helper would return an error *\) *)
+
+
+  module Make : functor (Key : Conv) (Val : Conv) -> sig
+    val bpf_map_lookup_value :
+      bpf_map -> Key.t (* -> flags *) -> (Val.t, int) Result.t
+    (** [bpf_map_lookup_value map k flags] looks up the value
+        associated with the key [k]. If key is invalid, no value is found or the size
+        of key/value is not in sync, it will return an error *)
+
+    val bpf_map_update_elem :
+      bpf_map -> Key.t -> Val.t (* -> flags *) -> (unit, int) Result.t
+    (** [bpf_map_update_elem map k v flags] updates the value
+        associated the key [k] to [v]. If key is invalid or the size
+        of key/value is not in sync, it will return an error *)
+  end
 end
-
-(* module Bpf_maps : sig *)
-(*   module Make : functor (Key : Conv) (Val : Conv) -> sig *)
-(*     val bpf_map_lookup_value_op : bpf_map -> Key.t -> (Val.t, int) Result.t *)
-
-(*     val bpf_map_update_elem_op : *)
-(*       bpf_map -> Key.t -> Val.t -> int64 -> (unit, int) Result.t *)
-(*   end *)
-(* end *)

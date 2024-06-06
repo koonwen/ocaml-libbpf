@@ -3,10 +3,10 @@ C-bindings for libbpf for writing type-safe eBPF user programs.
 
 # TODO
 - [X] Add more low level bindings
-- [ ] Add higher level abstraction for interacting with API's
+- [X] Add higher level abstraction for interacting with API's
 - [ ] Fix to libbpf.1.0 version
 - [ ] Package properly and find good names
-  - [ ] Add dependencies
+  - [X] Add dependencies
   - [ ] Prune useless things
 
 - [ ] Write integration with bpftool
@@ -29,6 +29,3 @@ handle older kernels, that are missing some of the features, by
 working around or gracefully degrading functionality. Thus libbpf is
 not tied to a specific kernel version and can/should be packaged and
 versioned independently.
-
-# Questions
-- Is it possible to hid the other dependencies of ocaml_libbpf?

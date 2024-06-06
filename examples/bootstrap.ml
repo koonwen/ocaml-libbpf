@@ -5,7 +5,7 @@ exception Exit of int
 
 let main () =
   (* Implicitly bump RLIMIT_MEMLOCK to create BPF maps *)
-  F.libbpf_set_strict_mode T.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
+  F.libbpf_set_strict_mode T.Libbpf_legacy.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
 
   (* Set signal handlers *)
   let exitting = ref true in

@@ -23,12 +23,12 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
   let libbpf_set_strict_mode =
     foreign "libbpf_set_strict_mode"
-      (Types.enum_libbpf_strict_mode @-> returning void)
+      (Types.Libbpf_legacy.enum_libbpf_strict_mode @-> returning void)
   [@@alert unsafe "incomplete implementation"]
 
   let libbpf_bpf_attach_type_str =
     foreign "libbpf_bpf_attach_type_str"
-      (Types.bpf_attach_type @-> returning string)
+      (Types.Attach_type.bpf_attach_type @-> returning string)
 
   (* ================================= Open / Load / Close  =================================== *)
 
