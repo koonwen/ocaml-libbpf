@@ -91,27 +91,27 @@ module Types (F : Ctypes.TYPE) = struct
       | BPF_CGROUP_UDP6_RECVMSG
       | BPF_CGROUP_GETSOCKOPT
       | BPF_CGROUP_SETSOCKOPT
-      | BPF_TRACE_RAW_TP
-      | BPF_TRACE_FENTRY
-      | BPF_TRACE_FEXIT
-      | BPF_MODIFY_RETURN
-      | BPF_LSM_MAC
-      | BPF_TRACE_ITER
-      | BPF_CGROUP_INET4_GETPEERNAME
-      | BPF_CGROUP_INET6_GETPEERNAME
-      | BPF_CGROUP_INET4_GETSOCKNAME
-      | BPF_CGROUP_INET6_GETSOCKNAME
-      | BPF_XDP_DEVMAP
-      | BPF_CGROUP_INET_SOCK_RELEASE
-      | BPF_XDP_CPUMAP
-      | BPF_SK_LOOKUP
-      | BPF_XDP
-      | BPF_SK_SKB_VERDICT
-      | BPF_SK_REUSEPORT_SELECT
-      | BPF_SK_REUSEPORT_SELECT_OR_MIGRATE
-      | BPF_PERF_EVENT
-      | BPF_TRACE_KPROBE_MULTI
-      | BPF_LSM_CGROUP
+      (* | BPF_TRACE_RAW_TP *)
+      (* | BPF_TRACE_FENTRY *)
+      (* | BPF_TRACE_FEXIT *)
+      (* | BPF_MODIFY_RETURN *)
+      (* | BPF_LSM_MAC *)
+      (* | BPF_TRACE_ITER *)
+      (* | BPF_CGROUP_INET4_GETPEERNAME *)
+      (* | BPF_CGROUP_INET6_GETPEERNAME *)
+      (* | BPF_CGROUP_INET4_GETSOCKNAME *)
+      (* | BPF_CGROUP_INET6_GETSOCKNAME *)
+      (* | BPF_XDP_DEVMAP *)
+      (* | BPF_CGROUP_INET_SOCK_RELEASE *)
+      (* | BPF_XDP_CPUMAP *)
+      (* | BPF_SK_LOOKUP *)
+      (* | BPF_XDP *)
+      (* | BPF_SK_SKB_VERDICT *)
+      (* | BPF_SK_REUSEPORT_SELECT *)
+      (* | BPF_SK_REUSEPORT_SELECT_OR_MIGRATE *)
+      (* | BPF_PERF_EVENT *)
+      (* | BPF_TRACE_KPROBE_MULTI *)
+      (* | BPF_LSM_CGROUP *)
 
     let bpf_attach_type =
       enum "bpf_attach_type"
@@ -143,33 +143,33 @@ module Types (F : Ctypes.TYPE) = struct
           (BPF_CGROUP_UDP6_RECVMSG, constant "BPF_CGROUP_UDP6_RECVMSG" int64_t);
           (BPF_CGROUP_GETSOCKOPT, constant "BPF_CGROUP_GETSOCKOPT" int64_t);
           (BPF_CGROUP_SETSOCKOPT, constant "BPF_CGROUP_SETSOCKOPT" int64_t);
-          (BPF_TRACE_RAW_TP, constant "BPF_TRACE_RAW_TP" int64_t);
-          (BPF_TRACE_FENTRY, constant "BPF_TRACE_FENTRY" int64_t);
-          (BPF_TRACE_FEXIT, constant "BPF_TRACE_FEXIT" int64_t);
-          (BPF_MODIFY_RETURN, constant "BPF_MODIFY_RETURN" int64_t);
-          (BPF_LSM_MAC, constant "BPF_LSM_MAC" int64_t);
-          (BPF_TRACE_ITER, constant "BPF_TRACE_ITER" int64_t);
-          ( BPF_CGROUP_INET4_GETPEERNAME,
-            constant "BPF_CGROUP_INET4_GETPEERNAME" int64_t );
-          ( BPF_CGROUP_INET6_GETPEERNAME,
-            constant "BPF_CGROUP_INET6_GETPEERNAME" int64_t );
-          ( BPF_CGROUP_INET4_GETSOCKNAME,
-            constant "BPF_CGROUP_INET4_GETSOCKNAME" int64_t );
-          ( BPF_CGROUP_INET6_GETSOCKNAME,
-            constant "BPF_CGROUP_INET6_GETSOCKNAME" int64_t );
-          (BPF_XDP_DEVMAP, constant "BPF_XDP_DEVMAP" int64_t);
-          ( BPF_CGROUP_INET_SOCK_RELEASE,
-            constant "BPF_CGROUP_INET_SOCK_RELEASE" int64_t );
-          (BPF_XDP_CPUMAP, constant "BPF_XDP_CPUMAP" int64_t);
-          (BPF_SK_LOOKUP, constant "BPF_SK_LOOKUP" int64_t);
-          (BPF_XDP, constant "BPF_XDP" int64_t);
-          (BPF_SK_SKB_VERDICT, constant "BPF_SK_SKB_VERDICT" int64_t);
-          (BPF_SK_REUSEPORT_SELECT, constant "BPF_SK_REUSEPORT_SELECT" int64_t);
-          ( BPF_SK_REUSEPORT_SELECT_OR_MIGRATE,
-            constant "BPF_SK_REUSEPORT_SELECT_OR_MIGRATE" int64_t );
-          (BPF_PERF_EVENT, constant "BPF_PERF_EVENT" int64_t);
-          (BPF_TRACE_KPROBE_MULTI, constant "BPF_TRACE_KPROBE_MULTI" int64_t);
-          (BPF_LSM_CGROUP, constant "BPF_LSM_CGROUP" int64_t);
+          (* (BPF_TRACE_RAW_TP, constant "BPF_TRACE_RAW_TP" int64_t); *)
+          (* (BPF_TRACE_FENTRY, constant "BPF_TRACE_FENTRY" int64_t); *)
+          (* (BPF_TRACE_FEXIT, constant "BPF_TRACE_FEXIT" int64_t); *)
+          (* (BPF_MODIFY_RETURN, constant "BPF_MODIFY_RETURN" int64_t); *)
+          (* (BPF_LSM_MAC, constant "BPF_LSM_MAC" int64_t); *)
+          (* (BPF_TRACE_ITER, constant "BPF_TRACE_ITER" int64_t); *)
+          (* ( BPF_CGROUP_INET4_GETPEERNAME, *)
+          (*   constant "BPF_CGROUP_INET4_GETPEERNAME" int64_t ); *)
+          (* ( BPF_CGROUP_INET6_GETPEERNAME, *)
+          (*   constant "BPF_CGROUP_INET6_GETPEERNAME" int64_t ); *)
+          (* ( BPF_CGROUP_INET4_GETSOCKNAME, *)
+          (*   constant "BPF_CGROUP_INET4_GETSOCKNAME" int64_t ); *)
+          (* ( BPF_CGROUP_INET6_GETSOCKNAME, *)
+          (*   constant "BPF_CGROUP_INET6_GETSOCKNAME" int64_t ); *)
+          (* (BPF_XDP_DEVMAP, constant "BPF_XDP_DEVMAP" int64_t); *)
+          (* ( BPF_CGROUP_INET_SOCK_RELEASE, *)
+          (*   constant "BPF_CGROUP_INET_SOCK_RELEASE" int64_t ); *)
+          (* (BPF_XDP_CPUMAP, constant "BPF_XDP_CPUMAP" int64_t); *)
+          (* (BPF_SK_LOOKUP, constant "BPF_SK_LOOKUP" int64_t); *)
+          (* (BPF_XDP, constant "BPF_XDP" int64_t); *)
+          (* (BPF_SK_SKB_VERDICT, constant "BPF_SK_SKB_VERDICT" int64_t); *)
+          (* (BPF_SK_REUSEPORT_SELECT, constant "BPF_SK_REUSEPORT_SELECT" int64_t); *)
+          (* ( BPF_SK_REUSEPORT_SELECT_OR_MIGRATE, *)
+          (*   constant "BPF_SK_REUSEPORT_SELECT_OR_MIGRATE" int64_t ); *)
+          (* (BPF_PERF_EVENT, constant "BPF_PERF_EVENT" int64_t); *)
+          (* (BPF_TRACE_KPROBE_MULTI, constant "BPF_TRACE_KPROBE_MULTI" int64_t); *)
+          (* (BPF_LSM_CGROUP, constant "BPF_LSM_CGROUP" int64_t); *)
         ]
   end
 end
