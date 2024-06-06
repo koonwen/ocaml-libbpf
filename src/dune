@@ -95,6 +95,7 @@
 
 (rule
  (targets gen_type_bindings.c)
+ (deps libbpf.h)
  (action
   (run ./gen_type_bindings.exe)))
 
