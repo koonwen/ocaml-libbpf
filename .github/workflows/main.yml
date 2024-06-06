@@ -31,6 +31,7 @@ jobs:
         with:
           ocaml-compiler: "5.2"
 
+      - run: opam install . --depext-only
       - run: opam install . --deps-only --with-test
 
       - run: opam exec -- dune build
