@@ -1,0 +1,1 @@
+(copy_files ../../{libbpf.a,libbpf.so})

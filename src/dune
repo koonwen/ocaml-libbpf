@@ -6,6 +6,7 @@
  (targets
   dllbpf.so
   libbpf.a
+  libbpf.pc
   bpf_core_read.h
   bpf_endian.h
   bpf.h
@@ -27,6 +28,9 @@
      (progn
       (bash "mkdir build root")
       (run make OBJDIR=build DESTDIR=root install)))
+    (copy
+     %{project_root}/vendor/libbpf/src/root/usr/lib64/pkgconfig/libbpf.pc
+     libbpf.pc)
     (copy
      %{project_root}/vendor/libbpf/src/root/usr/lib64/libbpf.so
      dllbpf.so)
@@ -161,6 +165,7 @@
  (c_library_flags -lelf -lz)
  (foreign_stubs
   (language c)
-  (names libbpf_stubs))
+  (names libbpf_stubs)
+  (include_dirs include))
  (libraries ctypes.stubs libbpf_bindings)
  (modules ocaml_libbpf))

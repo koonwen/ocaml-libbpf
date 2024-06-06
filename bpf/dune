@@ -13,6 +13,6 @@
  (mode
   (promote (until-clean)))
  (targets minimal.bpf.o)
- (deps minimal.bpf.c)
+ (deps minimal.bpf.c (source_tree %{project_root}/src/include))
  (action
-  (system "clang -g -O2 -target bpf -c %{deps}")))
+  (system "clang -g -O2 -target bpf -I ../src/include/ -c minimal.bpf.c")))
