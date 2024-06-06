@@ -28,10 +28,13 @@ jobs:
 
       - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2.2.9
+        # dune-cache: true
         with:
           ocaml-compiler: "5.2"
 
-      - run: opam install . --depext-only
+      # Need to force opam to use CLI 2.1 because it defaults to 2.0
+      - run: opam install . --cli=2.1 --depext-only
+
       - run: opam install . --deps-only --with-test
 
       - run: opam exec -- dune build
