@@ -33,8 +33,8 @@ jobs:
           ocaml-compiler: "5.2"
 
       # Need to force opam to use CLI 2.1 because it defaults to 2.0
-      # - run: opam install . --cli=2.1 --depext-only
-      - run: opam-depext -i
+      - run: opam install . --cli=2.1 --depext-only
+      - run: sudo apt-get install zlib1g-dev libelf-dev
 
       - run: opam install . --deps-only --with-test
 
