@@ -53,6 +53,9 @@ val bpf_object_find_map_by_name : bpf_object -> string -> bpf_map
 
     Fails if map is not found *)
 
+val bpf_map_fd : bpf_map -> int
+(** [bpf_map_fd map] returns the fd of the [map] *)
+
 val bpf_link_destroy : bpf_link -> unit
 (** [bpf_link_destroy link] detaches and unloads the bpf program
     associated to [link] from the kernel *)
@@ -105,6 +108,8 @@ module Bpf_maps : sig
   (*      BPF_MAP_TYPE_ARRAY or BPF_MAP_TYPE_PERCPU_ARRAY (all elements *)
   (*      always exist), the helper would return an error *\) *)
 
+  module IntConv : Conv with type t = int
+  module LongConv : Conv with type t = Signed.Long.t
 
   module Make : functor (Key : Conv) (Val : Conv) -> sig
     val bpf_map_lookup_value :
