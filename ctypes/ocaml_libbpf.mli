@@ -12,12 +12,54 @@ type bpf_map
 type bpf_link
 
 val bpf_object_open : string -> bpf_object
+(** [bpf_object_open path] opens and tries to read the bpf_object
+    found at path [path] in the filesystem. Libbpf parses the BPF
+    object file and discovers BPF maps, BPF programs, and global
+    variables. After a BPF app is opened, user space apps can make
+    additional adjustments (setting BPF program types, if necessary;
+    pre-setting initial values for global variables, etc.) before all
+    the entities are created and loaded.
+
+    Fails if object file is in invalid format or path does not exist *)
+
 val bpf_object_load : bpf_object -> unit
-val bpf_object_find_program_by_name : bpf_object -> string -> bpf_program option
+(** [bpf_object_load obj] tries to load [obj]. Libbpf parses
+    the BPF object file and discovers BPF maps, BPF programs, and
+    global variables. After a BPF app is opened, user space apps can
+    make additional adjustments (setting BPF program types, if
+    necessary; pre-setting initial values for global variables, etc.)
+    before all the entities are created and loaded. *)
+
+val bpf_object_find_program_by_name : bpf_object -> string -> bpf_program
+(** [bpf_object_find_program_by_name obj name] locates the
+    program identifier [name] within the [obj].
+
+    Fails if [name] is not found *)
+
 val bpf_program_attach : bpf_program -> bpf_link
-val bpf_object_find_map_by_name : bpf_object -> string -> bpf_map option
+(** [bpf_program_attach prog] attaches the [prog] in the
+    kernel to start respond to events. Libbpf attaches BPF programs to
+    various BPF hook points (e.g., tracepoints, kprobes, cgroup hooks,
+    network packet processing pipeline, etc.). During this phase, BPF
+    programs perform useful work such as processing packets, or
+    updating BPF maps and global variables that can be read from user
+    space
+
+    Fails if link could not be attached *)
+
+val bpf_object_find_map_by_name : bpf_object -> string -> bpf_map
+(** [bpf_object_find_map_by_name obj name] locates the bpf_map
+    identifier [name] within [obj].
+
+    Fails if map is not found *)
+
 val bpf_link_destroy : bpf_link -> unit
+(** [bpf_link_destroy link] detaches and unloads the bpf program
+    associated to [link] from the kernel *)
+
 val bpf_object_close : bpf_object -> unit
+(** [bpf_object_close obj] tearsdown [obj]. BPF maps are destroyed,
+    and all the resources used by the BPF app are freed. *)
 
 val with_bpf_object_open_load_link :
   obj_path:string ->
@@ -31,7 +73,8 @@ val with_bpf_object_open_load_link :
     [before_link] before the program attaches the bpf programs
     specified in [program_names]. Initialization code should go
     here. [fn] is passed the bpf_object and the list of program links
-    if all steps were successful. *)
+    if all steps were successful. Ensures all the proper shutdown and
+    cleanup of bpf_object resources and links *)
 
 module type Conv = sig
   type t

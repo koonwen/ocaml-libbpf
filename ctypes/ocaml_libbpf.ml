@@ -6,57 +6,105 @@ module C = struct
 end
 
 type bpf_object = C.Types.bpf_object structure ptr
-type bpf_program = C.Types.bpf_program structure ptr
+type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
 
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
 [@@warning "-69"]
 
 type bpf_link = C.Types.bpf_link structure ptr
 
+let failwith_f fmt =
+  let fails s = failwith s in
+  Printf.ksprintf fails fmt
+
 let bpf_object_open obj_file =
   match C.Functions.bpf_object__open obj_file with
-  | None -> failwith "Error opening object file"
-  | Some ptr -> ptr
+  | Some obj -> obj
+  | None -> failwith_f "Error opening object file at %s" obj_file
 
 let bpf_object_load bpf_object =
   let ret = C.Functions.bpf_object__load bpf_object in
-  if ret <> 0 then exit ret else ()
+  if ret = 0 then ()
+  else failwith_f "Could not load bpf_object, got exit %d" ret
 
 let bpf_object_find_program_by_name bpf_object name =
-  C.Functions.bpf_object__find_program_by_name bpf_object name
+  match C.Functions.bpf_object__find_program_by_name bpf_object name with
+  | Some prog -> { name; ptr = prog }
+  | None -> failwith_f "Program name %s not found" name
 
-let bpf_program_attach bpf_program =
-  match C.Functions.bpf_program__attach bpf_program with
-  | None -> failwith "Error attaching program"
-  | Some ptr -> ptr
+let bpf_program_attach ({ name; ptr } : bpf_program) =
+  match C.Functions.bpf_program__attach ptr with
+  | Some link -> link
+  | None -> failwith_f "Error attaching program %s" name
 
 let bpf_object_find_map_by_name bpf_object name =
   match C.Functions.bpf_object__find_map_by_name bpf_object name with
-  | None as n -> n
-  | Some ptr ->
-      let fd = C.Functions.bpf_map__fd ptr in
-      Some { fd; ptr }
+  | Some ptr -> { fd = C.Functions.bpf_map__fd ptr; ptr }
+  | None -> failwith_f "Map %s not found" name
 
 let bpf_link_destroy bpf_link =
   match C.Functions.bpf_link__destroy bpf_link with
-  | 0 -> ()
-  | e -> Printf.eprintf "Failed to destroy link %d\n" e
+  | e when e <> 0 -> Printf.eprintf "Failed to destroy link %d\n" e
+  | _ -> ()
 
 let bpf_object_close bpf_object = C.Functions.bpf_object__close bpf_object
 
-let with_bpf_object_open_load_link ~obj_path ~program_names ?(before_link=Stdlib.ignore) fn =
+let with_bpf_object_open_load_link ~obj_path ~program_names
+    ?(before_link = Stdlib.ignore) fn =
   let obj = bpf_object_open obj_path in
   bpf_object_load obj;
-  at_exit (fun () -> bpf_object_close obj); (* Ensure closed when program exits *)
-  let n_progs = List.length program_names in
-  if n_progs < 1 then failwith "Need to specify at least one program to load";
-  let programs = List.filter_map (bpf_object_find_program_by_name obj) program_names in
-  if List.length programs <> n_progs then failwith "Some program was not found";
-  before_link obj;
-  let program_links = List.filter_map C.Functions.bpf_program__attach programs in
-  at_exit (fun () -> List.iter bpf_link_destroy program_links); (* Ensure links are destroyed on exit *)
-  if List.length program_links <> n_progs then failwith "failed to attach some program(s)";
-  fn obj program_links
+
+  let cleanup ?links obj =
+    Option.iter (List.iter bpf_link_destroy) links;
+    bpf_object_close obj
+  in
+
+  (* Programs to load cannot be zero *)
+  if program_names = [] then (
+    cleanup obj;
+    failwith "Need to specify at least one program to load");
+
+  (* Get list of programs *)
+  let programs, not_found =
+    List.fold_left
+      (fun (succ, fail) name ->
+        match C.Functions.bpf_object__find_program_by_name obj name with
+        | None -> (succ, name :: fail)
+        | Some prog -> ((prog, name) :: succ, fail))
+      ([], []) program_names
+  in
+  if not_found <> [] then (
+    cleanup obj;
+    failwith_f "Failed to find %s programs" (String.concat "," not_found));
+
+  (* Run before_link user initialization code *)
+  (try before_link obj
+   with e ->
+     bpf_object_close obj;
+     raise e);
+
+  (* Get list of links *)
+  let links, not_attached =
+    List.fold_left
+      (fun (succ, fail) (prog, name) ->
+        match C.Functions.bpf_program__attach prog with
+        | None -> (succ, name :: fail)
+        | Some prog -> (prog :: succ, fail))
+      ([], []) programs
+  in
+  if not_attached <> [] then (
+    (* Detached successfully attached before shutdown *)
+    cleanup ~links obj;
+    failwith_f "Failed to link %s programs" (String.concat "," not_attached));
+
+  (* Run user program *)
+  (try fn obj links
+   with e ->
+     cleanup ~links obj;
+     raise e);
+
+  (* Ensure proper shutdown *)
+  cleanup ~links obj
 
 module type Conv = sig
   type t
