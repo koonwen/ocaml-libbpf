@@ -21,7 +21,7 @@
  (name ocaml_libbpf)
  (synopsis "Libbpf bindings")
  (description "Wrapped libbpf api's for writing BPF user programs in OCaml")
- (depends ocaml dune ctypes ctypes-foreign ppx_deriving ppx_expect)
+ (depends ocaml dune ctypes ctypes-foreign ppx_deriving ppx_expect conf-zlib)
  (tags
   (bindings bpf libbpf)))
 

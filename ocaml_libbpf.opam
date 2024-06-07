@@ -16,6 +16,7 @@ depends: [
   "ctypes-foreign"
   "ppx_deriving"
   "ppx_expect"
+  "conf-zlib"
   "odoc" {with-doc}
 ]
 build: [
@@ -36,6 +37,7 @@ dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
 available: [ os = "linux" & os-version >= "5.19"]
 # Just specify debian dependencies for now
 depexts: [
-  ["zlib1g-dev" "libelf-dev"] {os-distribution = "debian"}
-  ["zlib-devel" "elfutils-libelf-devel"] {os-distribution = "fedora"}
+  ["libelf-dev"] {os-distribution = "debian"}
+  ["libelf-dev"] {os-distribution = "ubuntu"}
+  ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

@@ -1,4 +1,4 @@
-name: Builds, tests & co
+name: ocaml-libbpf CI
 
 on:
   pull_request:
@@ -28,17 +28,14 @@ jobs:
 
       - name: Set up OCaml
         uses: ocaml/setup-ocaml@v2.2.9
-        # dune-cache: true
         with:
           ocaml-compiler: "5.2"
 
-      # Need to force opam to use CLI 2.1 because it defaults to 2.0
-      - run: opam install . --cli=2.1 --depext-only
-      - run: sudo apt-get install zlib1g-dev libelf-dev
+      - name: Install opam dependencies
+        run: opam install . --deps-only --with-test
 
-      - run: opam install . --deps-only --with-test
-
-      - run: opam exec -- dune build
+      - name: Build
+        run: opam exec -- dune build
 
       # Comment out until tests no longer require sudo permissions
       # - run: opam exec -- dune runtest
