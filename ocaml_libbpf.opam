@@ -17,6 +17,7 @@ depends: [
   "ppx_deriving"
   "ppx_expect"
   "conf-zlib"
+  "conf-clang"
   "odoc" {with-doc}
 ]
 build: [
@@ -35,7 +36,7 @@ build: [
 ]
 dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
 available: [ os = "linux" & os-version >= "5.19"]
-# Just specify debian dependencies for now
+# Need to extend to the rest of the linux distros
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}

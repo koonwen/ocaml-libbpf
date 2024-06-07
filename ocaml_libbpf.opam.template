@@ -1,5 +1,5 @@
 available: [ os = "linux" & os-version >= "5.19"]
-# Just specify debian dependencies for now
+# Need to extend to the rest of the linux distros
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}
