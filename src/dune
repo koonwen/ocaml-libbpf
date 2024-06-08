@@ -4,9 +4,9 @@
  (deps
   (source_tree %{project_root}/vendor/libbpf))
  (targets
+  libbpf.pc
   dllbpf.so
   libbpf.a
-  libbpf.pc
   bpf_core_read.h
   bpf_endian.h
   bpf.h
@@ -29,7 +29,7 @@
       (bash "mkdir build root")
       (run make OBJDIR=build DESTDIR=root install)))
     (copy
-     %{project_root}/vendor/libbpf/src/root/usr/lib64/pkgconfig/libbpf.pc
+     %{project_root}/vendor/libbpf/src/build/libbpf.pc
      libbpf.pc)
     (copy
      %{project_root}/vendor/libbpf/src/root/usr/lib64/libbpf.so

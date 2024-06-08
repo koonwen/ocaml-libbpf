@@ -147,7 +147,7 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let bpf_map__update_elem =
     foreign "bpf_map__update_elem"
       (ptr Types.bpf_map @-> ptr void @-> size_t @-> ptr void @-> size_t
-       @-> uint64_t @-> returning int)
+     @-> uint64_t @-> returning int)
 
   (** [bpf_map__delete_elem map_ptr key_ptr key_sz flags] allows to
       delete element in BPF map that corresponds to provided key.

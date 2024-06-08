@@ -10,7 +10,7 @@ homepage: "https://github.com/koonwen/ocaml-libbpf"
 doc: "https://url/to/documentation"
 bug-reports: "https://github.com/koonwen/ocaml-libbpf/issues"
 depends: [
-  "ocaml"
+  "ocaml" {>= "4.08"}
   "dune" {>= "3.13"}
   "ctypes"
   "ctypes-foreign"
@@ -40,5 +40,6 @@ available: [ os = "linux" & os-version >= "5.19"]
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}
+  ["libelf-dev"] {os-distribution = "opensuse"}
   ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

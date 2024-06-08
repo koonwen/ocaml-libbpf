@@ -3,5 +3,6 @@ available: [ os = "linux" & os-version >= "5.19"]
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}
+  ["libelf-dev"] {os-distribution = "opensuse"}
   ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

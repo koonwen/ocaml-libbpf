@@ -42,7 +42,7 @@ let bpf_object_find_map_by_name bpf_object name =
   | Some ptr -> { fd = C.Functions.bpf_map__fd ptr; ptr }
   | None -> failwith_f "Map %s not found" name
 
-let bpf_map_fd {fd;_} = fd
+let bpf_map_fd { fd; _ } = fd
 
 let bpf_link_destroy bpf_link =
   match C.Functions.bpf_link__destroy bpf_link with
