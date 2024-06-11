@@ -26,7 +26,7 @@
    (>= 4.08))
   dune
   (ctypes
-   (>= 0.13.0))
+   (>= 0.22.0))
   ctypes-foreign ; Might want to drop this too since we only really use it once
   ppx_deriving
   ppx_expect

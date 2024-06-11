@@ -1,9 +1,9 @@
 # eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
-# Fix to kernel >= 5.19
+# Fix to kernel >= 5.15
 available: [ os = "linux" &
 	   (( os-distribution = "debian" & os-version >= "11" ) |
- 	    ( os-distribution = "ubuntu" & os-version >= "22.10" ) |
-	    ( os-distribution = "fedora" & os-version >= "37" ))
+ 	    ( os-distribution = "ubuntu" & os-version >= "22.04" ) |
+	    ( os-distribution = "fedora" & os-version >= "36" ))
 	   ]
 
 # Need to extend to the rest of the linux distros
