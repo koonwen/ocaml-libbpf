@@ -1,8 +1,15 @@
-available: [ os = "linux" & os-version >= "5.19"]
+# eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
+# Fix to kernel >= 5.19
+available: [ os = "linux" &
+	   (( os-distribution = "debian" & os-version >= "11" ) |
+ 	    ( os-distribution = "ubuntu" & os-version >= "22.10" ) |
+	    ( os-distribution = "fedora" & os-version >= "37" ))
+	   ]
+
 # Need to extend to the rest of the linux distros
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}
-  ["libelf-dev"] {os-distribution = "opensuse"}
+  ["libelf-devel"] {os-distribution = "opensuse"}
   ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

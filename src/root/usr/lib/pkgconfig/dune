@@ -1,0 +1,3 @@
+(copy_files
+ (enabled_if (not %{arch_sixtyfour}))
+ (files ../../../../libbpf.pc))

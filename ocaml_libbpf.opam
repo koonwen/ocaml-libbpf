@@ -12,7 +12,7 @@ bug-reports: "https://github.com/koonwen/ocaml-libbpf/issues"
 depends: [
   "ocaml" {>= "4.08"}
   "dune" {>= "3.13"}
-  "ctypes"
+  "ctypes" {>= "0.13.0"}
   "ctypes-foreign"
   "ppx_deriving"
   "ppx_expect"
@@ -35,11 +35,18 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
-available: [ os = "linux" & os-version >= "5.19"]
+# eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
+# Want to fix kernel >= 5.19
+available: [ os = "linux" &
+	   (( os-distribution = "debian" & os-version >= "11" ) |
+ 	    ( os-distribution = "ubuntu" & os-version >= "22.10" ) |
+	    ( os-distribution = "fedora" & os-version >= "37" ))
+	   ]
+
 # Need to extend to the rest of the linux distros
 depexts: [
   ["libelf-dev"] {os-distribution = "debian"}
   ["libelf-dev"] {os-distribution = "ubuntu"}
-  ["libelf-dev"] {os-distribution = "opensuse"}
+  ["libelf-devel"] {os-distribution = "opensuse"}
   ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

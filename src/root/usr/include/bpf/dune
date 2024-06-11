@@ -1,0 +1,2 @@
+(copy_files
+ ../../../../{bpf_core_read,bpf_endian,bpf,bpf_helper_defs,bpf_helpers,bpf_tracing,btf,libbpf_common,libbpf,libbpf_legacy,libbpf_version,skel_internal,usdt.bpf}.h)
