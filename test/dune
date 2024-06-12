@@ -1,6 +1,6 @@
 (executables
- (names version maps)
- (libraries ocaml_libbpf))
+ (names test_version test_lifecycle)
+ (libraries ocaml_libbpf unix))
 
 (rule
  (mode
@@ -9,11 +9,3 @@
  (deps %{project_root}/bpf/minimal.bpf.o)
  (action
   (copy %{deps} %{target})))
-
-; (rule
-;  (alias tp)
-;  (mode promote)
-;  (action
-;   (with-stdout-to
-;    tp.txt
-;    (bash "sudo cat /sys/kernel/debug/tracing/available_events | grep io_uring"))))
