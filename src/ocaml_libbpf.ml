@@ -53,6 +53,10 @@ let bpf_object_close bpf_object = C.Functions.bpf_object__close bpf_object
 
 let with_bpf_object_open_load_link ~obj_path ~program_names
     ?(before_link = Stdlib.ignore) fn =
+  (* Implicitly bump RLIMIT_MEMLOCK to create BPF maps *)
+  C.Functions.libbpf_set_strict_mode
+    C.Types.Libbpf_legacy.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
+
   let obj = bpf_object_open obj_path in
   bpf_object_load obj;
 

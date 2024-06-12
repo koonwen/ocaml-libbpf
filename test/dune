@@ -1,11 +1,11 @@
 (executables
- (names test_version test_lifecycle)
+ (names test_version)
  (libraries ocaml_libbpf unix))
 
 (rule
  (mode
   (promote (until-clean)))
  (target minimal.bpf.o)
- (deps %{project_root}/bpf/minimal.bpf.o)
+ (deps %{project_root}/examples/minimal.bpf.o)
  (action
   (copy %{deps} %{target})))

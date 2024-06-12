@@ -1,11 +1,27 @@
 (executables
- (names bootstrap_c bootstrap)
+ (names bootstrap minimal)
  (libraries ocaml_libbpf ctypes.foreign))
+
+; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
 
 (rule
  (mode
   (promote (until-clean)))
- (target minimal.bpf.o)
- (deps %{project_root}/bpf/minimal.bpf.o)
+ (targets minimal.bpf.o)
+ (deps minimal.bpf.c %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
-  (copy %{deps} %{target})))
+  (system
+   "clang -g -O2 -target bpf -I %{project_root}/src/root/usr/include/ -I /usr/include/%{architecture}-linux-gnu/ -c minimal.bpf.c")))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (targets bootstrap.bpf.o)
+ (deps bootstrap.bpf.c %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
+ (action
+  (system
+   "clang -g -O2 -target bpf -I %{project_root}/vmlinux/ -I %{project_root}/src/root/usr/include/ -I /usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c")))
+
+; %{project_root}/vmlinux/                      symlink to architecture specific vmlinux headers, these should be generated instead
+; %{project_root}/src/root/usr/include/         Local libbpf headers
+; /usr/include/%{architecture}-linux-gnu/       Find asm/types.h for eBPF code

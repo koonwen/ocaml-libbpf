@@ -1,28 +1,28 @@
 open Ocaml_libbpf
 
-let () =
-  (* Implicitly bump RLIMIT_MEMLOCK to create BPF maps *)
-  C.Functions.libbpf_set_strict_mode
-    C.Types.Libbpf_legacy.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
+let obj_path = "minimal.bpf.o"
+let prog_name = "handle_tp"
+let map = "rb"
 
+(* Describe User callback event handler *)
+let handle_event _ctx _data _sz =
+  Printf.printf "Handle_event called\n%!";
+  0
+
+let () =
   (* Set signal handlers *)
   let exitting = ref true in
   let sig_handler = Sys.Signal_handle (fun _ -> exitting := false) in
   Sys.(set_signal sigint sig_handler);
   Sys.(set_signal sigterm sig_handler);
 
-  with_bpf_object_open_load_link ~obj_path:"minimal.bpf.o"
-    ~program_names:[ "handle_tp" ] (fun obj _links ->
+  (* Use auto open/load/link helper *)
+  with_bpf_object_open_load_link ~obj_path ~program_names:[ prog_name ]
+    (fun obj _links ->
       (* Load maps *)
-      let rb = bpf_object_find_map_by_name obj "rb" |> bpf_map_fd in
+      let rb = bpf_object_find_map_by_name obj map |> bpf_map_fd in
 
-      (* Describe event handler *)
-      let handle_event _ctx _data _sz =
-        Printf.printf "Handle_event called\n%!";
-        0
-      in
-
-      (* Coerce it to the static_funptr *)
+      (* Coerce it to the static_funptr so it can be passed to the C function *)
       let handle_event_f =
         let open Ctypes in
         coerce
