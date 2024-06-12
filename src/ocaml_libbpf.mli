@@ -124,4 +124,32 @@ module Bpf_maps : sig
         associated the key [k] to [v]. If key is invalid or the size
         of key/value is not in sync, it will return an error *)
   end
+
+  module RingBuffer : sig
+    type t
+    type callback = unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
+
+    val init : bpf_map -> callback:callback -> t
+    (** [init bpf_map callback] loads [callback] into the ring buffer
+        map provided by [bpf_map]. bpf map is freed by default when
+        the OCaml process exits
+
+        TO BE ADDED [ctx_ptr] allows the callback function to access
+        user provided context. *)
+
+    val poll : t -> timeout:int -> (int, int) Result.t
+    (** [poll t timeout] polls the ringbuffer to execute the loaded
+        callbacks on any pending entries, The function returns if
+        there are no entries in the given timeout,
+
+        Error code is returned if soemthing went wrong *)
+
+    val consume : t -> (int, int) Result.t
+    (** [consume t] runs callbacks on all entries in the ringbuffer
+        without event polling. Use this only if trying to squeeze
+        extra performance with busy-waiting.
+
+        Error code is returned if soemthing went wrong *)
+
+  end
 end

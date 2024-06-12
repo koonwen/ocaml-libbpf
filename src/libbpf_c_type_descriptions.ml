@@ -54,8 +54,9 @@ module Types (F : Ctypes.TYPE) = struct
   type ring
   type ring_buffer
   type ring_buffer_opts
+  type ring_buffer_sample_fn = unit ptr -> unit ptr -> Unsigned.size_t -> int
 
-  let ring_buffer_sample_fn =
+  let ring_buffer_sample_fn : ring_buffer_sample_fn static_funptr typ =
     typedef
       (static_funptr (ptr void @-> ptr void @-> size_t @-> returning int))
       "ring_buffer_sample_fn"

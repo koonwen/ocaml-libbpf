@@ -159,4 +159,37 @@ module Bpf_maps = struct
       in
       if err <> 0 then Result.error err else Result.ok ()
   end
+
+  module RingBuffer = struct
+    type t = C.Types.ring_buffer structure ptr
+    type callback = C.Types.ring_buffer_sample_fn
+
+    let init bpf_map ~callback : t =
+      (* Coerce it to the static_funptr so it can be passed to the C function *)
+      let callback_c =
+        let open Ctypes in
+        coerce
+          (Foreign.funptr ~runtime_lock:true
+             (ptr void @-> ptr void @-> size_t @-> returning int))
+          C.Types.ring_buffer_sample_fn callback
+      in
+      let rb =
+        match
+          C.Functions.ring_buffer__new bpf_map.fd callback_c Ctypes.null
+            Ctypes.(from_voidp C.Types.ring_buffer_opts null)
+        with
+        | None -> failwith "Failed to create ring buffer\n"
+        | Some rb -> rb
+      in
+      at_exit (fun () -> C.Functions.ring_buffer__free rb);
+      rb
+
+    let poll t ~timeout =
+      let ret = C.Functions.ring_buffer__poll t timeout in
+      if ret < 0 then Result.error (-ret) else Result.ok ret
+
+    let consume t =
+      let ret = C.Functions.ring_buffer__consume t in
+      if ret < 0 then Result.error (-ret) else Result.ok ret
+  end
 end
