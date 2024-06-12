@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 /* Copyright (c) 2020 Facebook */
 #include <linux/bpf.h>
-#include "bpf/bpf_helpers.h" 	/* This is from our libbpf library */
+#include "bpf/bpf_helpers.h" /* This is from our libbpf library */
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
-
-int my_pid = 0;
 
 /* Globals implemented as an array */
 struct {
@@ -15,15 +13,23 @@ struct {
   __type(value, long);
 } globals SEC(".maps");
 
+int my_pid_index = 0;
+
 SEC("tp/syscalls/sys_enter_write")
-int handle_tp(void *ctx)
-{
-	int pid = bpf_get_current_pid_tgid() >> 32;
+int handle_tp(void *ctx) {
+  int pid = bpf_get_current_pid_tgid() >> 32;
 
-	if (pid != my_pid)
-		return 0;
+  long *my_pid;
+  my_pid = bpf_map_lookup_elem(&globals, &my_pid_index);
+  if (my_pid == NULL) {
+    bpf_printk("Error got NULL");
+    return 1;
+  };
 
-	bpf_printk("BPF triggered from PID %d.\n", pid);
+  if (pid != *my_pid)
+    return 0;
 
-	return 0;
+  bpf_printk("BPF triggered from PID %d.\n", pid);
+
+  return 0;
 }
