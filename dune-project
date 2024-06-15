@@ -27,7 +27,7 @@
   dune
   (ctypes
    (>= 0.22.0))
-  ctypes-foreign ; Might want to drop this too since we only really use it once
+  (ctypes-foreign (>= 0.22.0)) ; Might want to figure out if this can be dropped because we really use it once
   ppx_deriving
   ppx_expect
   conf-zlib

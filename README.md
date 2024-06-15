@@ -11,10 +11,10 @@ C-bindings for libbpf for writing type-safe eBPF user programs.
   - [X] Prune useless things
 - [X] Write some examples
 
-- [ ] Write high level APIs for ring buffer usage
-- [ ] Fix to libbpf.1.0 version? (Now 1.4)
-- [ ] Add OS dependencies
-- [ ] Setup github actions
+- [X] Write high level APIs for ring buffer usage
+- [x] Fix to libbpf.1.0 version? (Now 1.4)
+- [x] Add OS dependencies
+- [x] Setup github actions
 - [ ] Write tests for bindings
 
 ## Would be nice to support

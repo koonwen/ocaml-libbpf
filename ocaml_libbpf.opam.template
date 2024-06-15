@@ -1,9 +1,10 @@
 # eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
-# Fix to kernel >= 5.15
+# Fix to kernel >= 5.15 to allow executing syscalls
 available: [ os = "linux" &
-	   (( os-distribution = "debian" & os-version >= "11" ) |
- 	    ( os-distribution = "ubuntu" & os-version >= "22.04" ) |
-	    ( os-distribution = "fedora" & os-version >= "36" ))
+	   (( os-distribution = "debian" & os-version >= "12" )    |      # Linux 6.1
+ 	    ( os-distribution = "ubuntu" & os-version >= "22.04" ) |      # Linux 5.15
+	    ( os-distribution = "fedora" & os-version >= "36" )    |      # Linux 5.17
+	    ( os-distribution = "opensuse-leap" & os-version >= "15.6" )) # Linux 6.14
 	   ]
 
 # Need to extend to the rest of the linux distros
