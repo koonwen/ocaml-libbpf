@@ -1,0 +1,29 @@
+{
+  "ocaml_libbpf.1.0": [
+    "libbpf_major_version",
+    "libbpf_minor_version",
+    "libbpf_strerror",
+    "libbpf_set_strict_mode",
+    "libbpf_bpf_attach_type_str",
+    "bpf_object__open",
+    "bpf_object__load",
+    "bpf_object__find_program_by_name",
+    "bpf_object__next_program",
+    "bpf_prog_attach",
+    "bpf_link__destroy",
+    "bpf_object__close",
+    "bpf_object__find_map_by_name",
+    "bpf_map__fd",
+    "bpf_map_lookup_elem",
+    "bpf_map_update_elem",
+    "bpf_map_delete_elem",
+    "ring_buffer__new",
+    "ring_buffer__poll",
+    "ring_buffer__free",
+    "ring_buffer__consume",
+    "ring_buffer__ring",
+    "ring__consumer_pos",
+    "ring__producer_pos",
+    "ring__avail_data_size"
+  ]
+}

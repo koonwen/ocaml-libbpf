@@ -1,34 +1,32 @@
 [![OCaml-CI Build Status](https://img.shields.io/endpoint?url=https://ocaml.ci.dev/badge/koonwen/ocaml-libbpf/main&logo=ocaml)](https://ocaml.ci.dev/github/koonwen/ocaml-libbpf)
 
 # ocaml-libbpf
-C-bindings for libbpf for writing type-safe eBPF user programs.
+Libbpf C-bindings for type-safe eBPF user programs.
 
-# TODO
-- [X] Add more low level bindings
-- [X] Add higher level abstraction for interacting with API's
-- [X] Package properly and find good names
-  - [X] Add dependencies
-  - [X] Prune useless things
-- [X] Write some examples
+Writing eBPF programs consist of two distinct parts. Implementing the
+code that executes in-kernel **and** user-level code responsible for
+loading/initializing/linking/teardown of the in-kernel code. This
+OCaml library provides the latter via binding the C
+[libbpf](https://github.com/libbpf/libbpf) library. It exposes both
+the raw low-level bindings as well as a set of high-level API's for
+handling your eBPF objects. As of now, the kernel part must still be
+written in [restricted
+C](https://stackoverflow.com/questions/57688344/what-is-not-allowed-in-restricted-c-for-ebpf)
+and compiled to eBPF bytecode.
 
-- [X] Write high level APIs for ring buffer usage
-- [x] Fix to libbpf.1.0 version? (Now 1.4)
-- [x] Add OS dependencies
-- [x] Setup github actions
-- [ ] Write tests for bindings
+The full API set of Libbpf is quite large, see [supported](supported.json) for the list
+of currently bound API's. Contributions are welcome.
 
 ## Would be nice to support
-- [ ] Write integration with bpftool
+- [ ] Integration with bpftool
 
-# Notes
-libbpf API's provide both userland and kernel API's, when writing
-kernel bpf code, bpf/bpf_helpers.h, bpf/bpf_core_read.h,
-bpf/bpf_tracing provides the kernel bpf API's and most of the other
-important includes are in linux/bpf*.h headers. Typically, userland
-code will export bpf/libbpf.h code to get the API's you want along
-with the other bpf* group headers
+# Developer Notes
+## Build
+libbpf API's provide both userland and kernel API's. Typically,
+bpf_helpers.h, bpf_core_read.h, bpf_tracing.h define the
+kernel API's. Userland API definitions are found in libbpf.h
 
-# Kernel compatibility
+## Kernel compatibility
 No ties to any specific kernel, transparent handling of older
 kernels. Libbpf is designed to be kernel-agnostic and work across
 multitude of kernel versions. It has built-in mechanisms to gracefully
