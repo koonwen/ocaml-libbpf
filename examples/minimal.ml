@@ -40,4 +40,5 @@ let () =
   let _ = bpf_link_destroy link in
   let _ = bpf_object_close obj in
 
-  Printf.printf "\nrun 'sudo cat /sys/kernel/tracing/trace_pipe' for trace output\n"
+  Printf.printf
+    "\nrun 'sudo cat /sys/kernel/tracing/trace_pipe' for trace output\n"

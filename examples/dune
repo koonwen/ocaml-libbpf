@@ -1,5 +1,5 @@
 (executables
- (names bootstrap minimal)
+ (names bootstrap bootstrap_c minimal)
  (libraries ocaml_libbpf ctypes.foreign))
 
 ; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
@@ -19,7 +19,8 @@
  (targets bootstrap.bpf.o)
  (deps
   (source_tree %{project_root}/vmlinux)
-  bootstrap.bpf.c bootstrap.h
+  bootstrap.bpf.c
+  bootstrap.h
   %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system

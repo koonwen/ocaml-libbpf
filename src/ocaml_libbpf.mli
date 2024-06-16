@@ -127,7 +127,9 @@ module Bpf_maps : sig
 
   module RingBuffer : sig
     type t
-    type callback = unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
+
+    type callback =
+      unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
 
     val init : bpf_map -> callback:callback -> t
     (** [init bpf_map callback] loads [callback] into the ring buffer
@@ -150,6 +152,5 @@ module Bpf_maps : sig
         extra performance with busy-waiting.
 
         Error code is returned if soemthing went wrong *)
-
   end
 end
