@@ -29,7 +29,7 @@ int handle_tp(void *ctx) {
   if (pid != *my_pid)
     return 0;
 
-  bpf_printk("BPF triggered from PID %d.\n", pid);
+  bpf_printk("Hello, BPF triggered from PID %d", pid);
 
   return 0;
 }
