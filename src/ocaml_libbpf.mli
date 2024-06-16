@@ -6,10 +6,15 @@ end
 (* How do I mix these abstract types with the underlying C types so
    that experienced users can mix the low-level C calls the
    high and low level API's? *)
-type bpf_object
-type bpf_program
-type bpf_map
-type bpf_link
+type bpf_object = C.Types.bpf_object Ctypes.structure Ctypes.ptr
+
+type bpf_program = {
+  name : string;
+  ptr : C.Types.bpf_program Ctypes.structure Ctypes.ptr;
+}
+
+type bpf_map = { fd : int; ptr : C.Types.bpf_map Ctypes.structure Ctypes.ptr }
+type bpf_link = C.Types.bpf_link Ctypes.structure Ctypes.ptr
 
 val bpf_object_open : string -> bpf_object
 (** [bpf_object_open path] opens and tries to read the bpf_object
@@ -144,13 +149,15 @@ module Bpf_maps : sig
         callbacks on any pending entries, The function returns if
         there are no entries in the given timeout,
 
-        Error code is returned if soemthing went wrong *)
+        Error code is returned if soemthing went wrong, Ctrl-C will
+        cause -EINTR *)
 
     val consume : t -> (int, int) Result.t
     (** [consume t] runs callbacks on all entries in the ringbuffer
         without event polling. Use this only if trying to squeeze
         extra performance with busy-waiting.
 
-        Error code is returned if soemthing went wrong *)
+        Error code is returned if soemthing went wrong Ctrl-C will
+        cause -EINTR *)
   end
 end

@@ -7,10 +7,7 @@ end
 
 type bpf_object = C.Types.bpf_object structure ptr
 type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
-
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
-[@@warning "-69"]
-
 type bpf_link = C.Types.bpf_link structure ptr
 
 let failwith_f fmt =
@@ -186,10 +183,10 @@ module Bpf_maps = struct
 
     let poll t ~timeout =
       let ret = C.Functions.ring_buffer__poll t timeout in
-      if ret < 0 then Result.error (-ret) else Result.ok ret
+      if ret < 0 then Result.error ret else Result.ok ret
 
     let consume t =
       let ret = C.Functions.ring_buffer__consume t in
-      if ret < 0 then Result.error (-ret) else Result.ok ret
+      if ret < 0 then Result.error ret else Result.ok ret
   end
 end
