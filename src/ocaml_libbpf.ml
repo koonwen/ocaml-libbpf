@@ -169,7 +169,7 @@ module Bpf_maps = struct
       let callback_c =
         let open Ctypes in
         coerce
-          (Foreign.funptr ~runtime_lock:true
+          (Foreign.funptr ~runtime_lock:false ~check_errno:true
              (ptr void @-> ptr void @-> size_t @-> returning int))
           C.Types.ring_buffer_sample_fn callback
       in
