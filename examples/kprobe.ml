@@ -14,7 +14,8 @@ let () =
       Printf.printf
         "Successfully started! Please run `sudo cat \
          /sys/kernel/debug/tracing/trace_pipe` to see output of the BPF \
-         programs.\n%!";
+         programs.\n\
+         %!";
 
       while !exitting do
         Unix.sleepf 1.0;
