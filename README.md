@@ -17,8 +17,12 @@ and compiled to eBPF bytecode.
 The full API set of Libbpf is quite large, see [supported](supported.json) for the list
 of currently bound API's. Contributions are welcome.
 
+## TODO
+- [X] Generate vmlinux
+- [ ] BPF CORE bindings?
+
 ## Would be nice to support
-- [ ] Integration with bpftool
+- [ ] Integration with bpftool & bindings for generated skel code
 
 # Developer Notes
 ## Build

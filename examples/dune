@@ -18,14 +18,15 @@
   (promote (until-clean)))
  (targets bootstrap.bpf.o)
  (deps
-  (source_tree %{project_root}/vmlinux)
+  vmlinux.h
   bootstrap.bpf.c
   bootstrap.h
   %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I%{project_root}/vmlinux/ -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c")))
 
-; %{project_root}/vmlinux/                      symlink to architecture specific vmlinux headers, these should be generated instead
-; %{project_root}/src/root/usr/include/         Local libbpf headers
+; If missing "vmlinux.h", use `make vmlinux` to generate this
+
+; %{project_root}/src/root/usr/include/         Vendored libbpf headers
 ; /usr/include/%{architecture}-linux-gnu/       Find asm/types.h for eBPF code
