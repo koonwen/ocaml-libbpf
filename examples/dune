@@ -1,5 +1,5 @@
 (executables
- (names bootstrap bootstrap_c minimal)
+ (names bootstrap bootstrap_c kprobe minimal)
  (libraries ocaml_libbpf ctypes.foreign))
 
 ; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
@@ -8,25 +8,54 @@
  (mode
   (promote (until-clean)))
  (targets minimal.bpf.o)
- (deps minimal.bpf.c %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
+ (deps
+  arch
+  minimal.bpf.c
+  %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c minimal.bpf.c")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c minimal.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (targets kprobe.bpf.o)
+ (deps
+  arch
+  vmlinux.h
+  kprobe.bpf.c
+  %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
+ (action
+  (system
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c kprobe.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode
   (promote (until-clean)))
  (targets bootstrap.bpf.o)
  (deps
+  arch
   vmlinux.h
   bootstrap.bpf.c
   bootstrap.h
   %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c -D__TARGET_ARCH_%{read:arch}")))
 
-; If missing "vmlinux.h", use `make vmlinux` to generate this
+(rule
+ (mode
+  (promote (until-clean)))
+ (targets vmlinux.h arch)
+ (action
+  (progn
+   (with-stdout-to
+    vmlinux.h
+    (run /usr/sbin/bpftool btf dump file /sys/kernel/btf/vmlinux format c))
+   (with-stdout-to
+    arch
+    (bash
+     "uname -m | sed 's/x86_64/x86/' | sed 's/arm.*/arm/' | sed 's/aarch64/arm64/' | sed 's/ppc64le/powerpc/' | sed 's/mips.*/mips/' | sed 's/riscv64/riscv/' | sed 's/loongarch64/loongarch/'")))))
 
 ; %{project_root}/src/root/usr/include/         Vendored libbpf headers
 ; /usr/include/%{architecture}-linux-gnu/       Find asm/types.h for eBPF code

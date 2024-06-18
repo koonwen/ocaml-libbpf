@@ -11,6 +11,9 @@ vmlinux:
 minimal: all
 	sudo $(CWD)/minimal.exe
 
+kprobe: all
+	sudo $(CWD)/kprobe.exe
+
 bootstrap: all
 	sudo $(CWD)/bootstrap.exe
 
@@ -20,4 +23,3 @@ bootstrap_c: all
 clean:
 	dune clean
 	rm vmlinux.h
-	rm *.o
