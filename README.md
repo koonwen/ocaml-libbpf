@@ -17,6 +17,94 @@ and compiled to eBPF bytecode.
 The full API set of Libbpf is quite large, see [supported](supported.json) for the list
 of currently bound API's. Contributions are welcome.
 
+# Usage
+See `examples` directory on how ocaml\_libbpf can be used to interact
+with eBPF programs defined in *.bpf.c source files. The high-level
+API's provided in ocaml\_libbpf make it easy to perform repetitive
+tasks like open/load/linking/initializing/teardown. The BPF\_maps module
+also make interacting with maps simpler than the C API.
+
+"To run these examples, use `make <minimal/kprobe/bootstrap>`. These
+examples are taken from
+[libbpf-bootstrap](https://github.com/libbpf/libbpf-bootstrap)
+repository and rewritten in OCaml
+
+Let's run through an example of how we would use ocaml\_libbpf
+
+### Maps
+The usual underlying C API for interact with maps requires users to
+specify the key and value as well as the types of the key and
+value. If the types do not match with the types declared in the
+underlying table, an error is thrown. To enforce type safety and
+reduce duplication, the `Bpf_maps.Make` functor expects a **Key** and
+**Value** module that respects the `Bpf_maps.Conv` type signature
+```ocaml
+module type Conv = sig
+    type t
+
+    val empty : t
+    val ty : t Ctypes.typ
+  end
+```
+Subsequently, users can use map API's via the resulting
+module to make queries/updates to their bpf maps.
+
+for example
+```ocaml
+  module IntConv : Conv with type t = int = struct
+    type t = int
+
+    let empty = 0
+    let ty = Ctypes.int
+  end
+
+  module LongConv : Conv with type t = Signed.Long.t = struct
+    type t = Signed.Long.t
+
+    let empty = Signed.Long.zero
+    let ty = Ctypes.long
+  end
+
+module M = Bpf_maps.Make (Bpf_maps.IntConv) (Bpf_maps.LongConv)
+
+(* Load PID into BPF map*)
+let before_link obj =
+  let pid = Unix.getpid () |> Signed.Long.of_int in
+  let global_map = bpf_object_find_map_by_name obj map in
+  assert (M.bpf_map_update_elem global_map 0 pid |> Result.is_ok)
+```
+### Open/Load/Link
+Loading eBPF programs into the kernel are often repetitive and
+tedious, ocaml\_libbpf provides an easy API to do this, users need to
+provide the path to the compiled bpf object, the name of the program
+and optionally an initialization function.
+
+```ocaml
+let obj_path = "minimal.bpf.o"
+let program_names = [ "handle_tp" ]
+let map = "globals"
+
+let () =
+  with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
+    (fun _obj _link ->
+      let exitting = ref true in
+      let sig_handler = Sys.Signal_handle (fun _ -> exitting := false) in
+      Sys.(set_signal sigint sig_handler);
+      Sys.(set_signal sigterm sig_handler);
+
+      Printf.printf
+        "Successfully started! Please run `sudo cat \
+         /sys/kernel/debug/tracing/trace_pipe` to see output of the BPF \
+         programs.\n\
+         %!";
+
+      (* Loop until Ctrl-C is called *)
+      while !exitting do
+        Printf.eprintf ".%!";
+        Unix.sleepf 1.0
+      done)
+```
+
 ## TODO
 - [X] Generate vmlinux
 - [ ] BPF CORE bindings?
