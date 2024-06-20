@@ -46,9 +46,9 @@ available: [ os = "linux" &
 
 # Need to extend to the rest of the linux distros
 depexts: [
-  ["bpftool"]
-  ["libelf-dev"] {os-distribution = "debian"}
-  ["libelf-dev"] {os-distribution = "ubuntu"}
+  [ "linux-tools-common" ] {os-distribution = "ubuntu"}
+  ["bpftool"] {os-distribution = "debian" | "fedora"}
+  ["libelf-dev"] {os-distribution = "debian"| os-distribution = "ubuntu" }
   ["libelf-devel"] {os-distribution = "opensuse"}
   ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]
