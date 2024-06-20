@@ -83,3 +83,19 @@ val with_bpf_object_open_load_link :
     here. [fn] is passed the bpf_object and the list of program links
     if all steps were successful. Ensures all the proper shutdown and
     cleanup of bpf_object resources and links *)
+
+  val bpf_map_lookup_value : key_ty:'a Ctypes.typ -> val_ty:'b Ctypes.typ -> val_zero:'b -> bpf_map -> 'a -> 'b
+  (** [bpf_map_lookup_value key_ty val_ty val_zero map k flags] Looks
+      up the value associated with the key [k]. If key is invalid, no
+      value is found or the size of key/value is not in sync, it will
+      return an error. [bpf_map_lookup_value] expects [key_ty] and
+      [val_ty] to verify the types are coherent in your bpf map
+      declaration. [val_zero] is merely an initialization value that
+      will be overwritten.  *)
+
+  val bpf_map_update_elem : key_ty:'a Ctypes.typ -> val_ty:'b Ctypes.typ -> bpf_map -> 'a -> 'b (* -> flags *) -> unit
+  (** [bpf_map_update_elem key_ty val_ty map k v flags] updates the
+      value associated the key [k] to [v]. If key is invalid or the
+      size of key/value is not in sync, it will return an
+      error. [bpf_map_update_elem] expects [key_ty] and [val_ty] to
+      verify the types are coherent in your bpf map declaration. *)

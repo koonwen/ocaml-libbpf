@@ -31,48 +31,6 @@ repository and rewritten in OCaml
 
 Let's run through an example of how we would use ocaml\_libbpf
 
-### Maps
-The usual underlying C API for interact with maps requires users to
-specify the key and value as well as the types of the key and
-value. If the types do not match with the types declared in the
-underlying table, an error is thrown. To enforce type safety and
-reduce duplication, the `Bpf_maps.Make` functor expects a **Key** and
-**Value** module that respects the `Bpf_maps.Conv` type signature
-```ocaml
-module type Conv = sig
-    type t
-
-    val empty : t
-    val ty : t Ctypes.typ
-  end
-```
-Subsequently, users can use map API's via the resulting
-module to make queries/updates to their bpf maps.
-
-for example
-```ocaml
-  module IntConv : Conv with type t = int = struct
-    type t = int
-
-    let empty = 0
-    let ty = Ctypes.int
-  end
-
-  module LongConv : Conv with type t = Signed.Long.t = struct
-    type t = Signed.Long.t
-
-    let empty = Signed.Long.zero
-    let ty = Ctypes.long
-  end
-
-module M = Bpf_maps.Make (Bpf_maps.IntConv) (Bpf_maps.LongConv)
-
-(* Load PID into BPF map*)
-let before_link obj =
-  let pid = Unix.getpid () |> Signed.Long.of_int in
-  let global_map = bpf_object_find_map_by_name obj map in
-  assert (M.bpf_map_update_elem global_map 0 pid |> Result.is_ok)
-```
 ### Open/Load/Link
 Loading eBPF programs into the kernel are often repetitive and
 tedious, ocaml\_libbpf provides an easy API to do this, users need to
@@ -83,6 +41,12 @@ and optionally an initialization function.
 let obj_path = "minimal.bpf.o"
 let program_names = [ "handle_tp" ]
 let map = "globals"
+
+(* Load PID into BPF map*)
+let before_link obj =
+  let pid = Unix.getpid () |> Signed.Long.of_int in
+  let global_map = bpf_object_find_map_by_name obj map in
+  bpf_map_update_elem ~key_ty:Ctypes.int ~val_ty:Ctypes.long global_map 0 pid
 
 let () =
   with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
@@ -105,9 +69,17 @@ let () =
       done)
 ```
 
+### Maps
+`ocaml_libbpf_maps` is an optional convenience package that provides
+wrappers for BPF maps. Currently only Ringbuffer maps are added. An
+example usage of them can be found in
+[examples/bootstrap.ml](./examples/bootstrap.ml). This has been
+packaged separately since it drags in `libffi` dependency.
+
 ## TODO
 - [X] Generate vmlinux
 - [ ] BPF CORE bindings?
+- [ ] Add generated odoc
 
 ## Would be nice to support
 - [ ] Integration with bpftool & bindings for generated skel code

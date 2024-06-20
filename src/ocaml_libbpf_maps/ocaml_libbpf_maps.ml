@@ -1,57 +1,6 @@
 open Ocaml_libbpf
 open Ctypes
 
-module type Conv = sig
-  type t
-
-  val empty : t
-  val ty : t typ
-end
-
-module IntConv : Conv with type t = int = struct
-  type t = int
-
-  let empty = 0
-  let ty = int
-end
-
-module LongConv : Conv with type t = Signed.Long.t = struct
-  type t = Signed.Long.t
-
-  let empty = Signed.Long.zero
-  let ty = long
-end
-
-module Make (Key : Conv) (Val : Conv) = struct
-  let bpf_map_lookup_value bpf_map key (* flags *) =
-    let key = allocate Key.ty key in
-    let sz_key = sizeof Key.ty |> Unsigned.Size_t.of_int in
-    let value = allocate Val.ty Val.empty in
-    let sz_val = sizeof Val.ty |> Unsigned.Size_t.of_int in
-    let err =
-      C.Functions.bpf_map__lookup_elem bpf_map.ptr (to_voidp key) sz_key
-        (to_voidp value) sz_val Unsigned.UInt64.zero
-    in
-    if err = 0 then !@value
-    else
-      let err = Printf.sprintf "bpf_map_lookup_value got %d" err in
-      raise (Sys_error err)
-
-  let bpf_map_update_elem bpf_map key value (* flags *) =
-    let key = allocate Key.ty key in
-    let sz_key = sizeof Key.ty |> Unsigned.Size_t.of_int in
-    let value = allocate Val.ty value in
-    let sz_val = sizeof Val.ty |> Unsigned.Size_t.of_int in
-    let err =
-      C.Functions.bpf_map__update_elem bpf_map.ptr (to_voidp key) sz_key
-        (to_voidp value) sz_val Unsigned.UInt64.zero
-    in
-    if err = 0 then ()
-    else
-      let err = Printf.sprintf "bpf_map_update_elem got %d" err in
-      raise (Sys_error err)
-end
-
 module RingBuffer = struct
   type t = C.Types.ring_buffer structure ptr
   type callback = C.Types.ring_buffer_sample_fn

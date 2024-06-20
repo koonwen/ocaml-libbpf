@@ -104,3 +104,31 @@ let with_bpf_object_open_load_link ~obj_path ~program_names
 
   (* Ensure proper shutdown *)
   cleanup ~links obj
+
+let bpf_map_lookup_value ~key_ty ~val_ty ~val_zero bpf_map key =
+  let key = allocate key_ty key in
+  let sz_key = sizeof key_ty |> Unsigned.Size_t.of_int in
+  let value = allocate val_ty val_zero in
+  let sz_val = sizeof val_ty |> Unsigned.Size_t.of_int in
+  let err =
+    C.Functions.bpf_map__lookup_elem bpf_map.ptr (to_voidp key) sz_key
+      (to_voidp value) sz_val Unsigned.UInt64.zero
+  in
+  if err = 0 then !@value
+  else
+    let err = Printf.sprintf "bpf_map_lookup_value got %d" err in
+    raise (Sys_error err)
+
+let bpf_map_update_elem ~key_ty ~val_ty bpf_map key value =
+  let key = allocate key_ty key in
+  let sz_key = sizeof key_ty |> Unsigned.Size_t.of_int in
+  let value = allocate val_ty value in
+  let sz_val = sizeof val_ty |> Unsigned.Size_t.of_int in
+  let err =
+    C.Functions.bpf_map__update_elem bpf_map.ptr (to_voidp key) sz_key
+      (to_voidp value) sz_val Unsigned.UInt64.zero
+  in
+  if err = 0 then ()
+  else
+    let err = Printf.sprintf "bpf_map_update_value got %d" err in
+    raise (Sys_error err)
