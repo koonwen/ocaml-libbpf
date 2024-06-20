@@ -9,7 +9,7 @@ let map = "globals"
 let before_link obj =
   let pid = Unix.getpid () |> Signed.Long.of_int in
   let global_map = bpf_object_find_map_by_name obj map in
-  assert (M.bpf_map_update_elem global_map 0 pid |> Result.is_ok)
+  M.bpf_map_update_elem global_map 0 pid
 
 let () =
   with_bpf_object_open_load_link ~obj_path ~program_names ~before_link

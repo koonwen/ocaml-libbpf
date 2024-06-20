@@ -142,7 +142,10 @@ module Bpf_maps = struct
         C.Functions.bpf_map__lookup_elem bpf_map.ptr (to_voidp key) sz_key
           (to_voidp value) sz_val Unsigned.UInt64.zero
       in
-      if err <> 0 then Result.error err else Result.ok !@value
+      if err = 0 then !@value
+      else
+        let err = Printf.sprintf "bpf_map_lookup_value got %d" err in
+        raise (Sys_error err)
 
     let bpf_map_update_elem bpf_map key value (* flags *) =
       let open Ctypes in
@@ -154,14 +157,17 @@ module Bpf_maps = struct
         C.Functions.bpf_map__update_elem bpf_map.ptr (to_voidp key) sz_key
           (to_voidp value) sz_val Unsigned.UInt64.zero
       in
-      if err <> 0 then Result.error err else Result.ok ()
+      if err = 0 then ()
+      else
+        let err = Printf.sprintf "bpf_map_update_elem got %d" err in
+        raise (Sys_error err)
   end
 
   module RingBuffer = struct
     type t = C.Types.ring_buffer structure ptr
     type callback = C.Types.ring_buffer_sample_fn
 
-    let init bpf_map ~callback : t =
+    let init bpf_map ~callback f =
       (* Coerce it to the static_funptr so it can be passed to the C function *)
       let callback_c =
         let open Ctypes in
@@ -178,15 +184,22 @@ module Bpf_maps = struct
         | None -> failwith "Failed to create ring buffer\n"
         | Some rb -> rb
       in
-      at_exit (fun () -> C.Functions.ring_buffer__free rb);
-      rb
+      Fun.protect
+        ~finally:(fun () -> C.Functions.ring_buffer__free rb)
+        (fun () -> f rb)
 
     let poll t ~timeout =
       let ret = C.Functions.ring_buffer__poll t timeout in
-      if ret < 0 then Result.error ret else Result.ok ret
+      if ret >= 0 then ret
+      else
+        let err = Printf.sprintf "ring_buffer__poll got %d" ret in
+        raise (Sys_error err)
 
     let consume t =
       let ret = C.Functions.ring_buffer__consume t in
-      if ret < 0 then Result.error ret else Result.ok ret
+      if ret >= 0 then ret
+      else
+        let err = Printf.sprintf "ring_buffer__consume got %d" ret in
+        raise (Sys_error err)
   end
 end

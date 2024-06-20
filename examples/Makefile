@@ -1,23 +1,18 @@
 CWD=../_build/default/examples
 
-all: vmlinux build
-
 build:
 	dune build
 
-vmlinux:
-	sudo bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
-
-minimal: all
+minimal: build
 	sudo $(CWD)/minimal.exe
 
-kprobe: all
+kprobe: build
 	sudo $(CWD)/kprobe.exe
 
-bootstrap: all
+bootstrap: build
 	sudo $(CWD)/bootstrap.exe
 
-bootstrap_c: all
+bootstrap_c: build
 	sudo $(CWD)/bootstrap_c.exe
 
 clean:

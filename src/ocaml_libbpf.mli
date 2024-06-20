@@ -117,14 +117,12 @@ module Bpf_maps : sig
   module LongConv : Conv with type t = Signed.Long.t
 
   module Make : functor (Key : Conv) (Val : Conv) -> sig
-    val bpf_map_lookup_value :
-      bpf_map -> Key.t (* -> flags *) -> (Val.t, int) Result.t
+    val bpf_map_lookup_value : bpf_map -> Key.t (* -> flags *) -> Val.t
     (** [bpf_map_lookup_value map k flags] looks up the value
         associated with the key [k]. If key is invalid, no value is found or the size
         of key/value is not in sync, it will return an error *)
 
-    val bpf_map_update_elem :
-      bpf_map -> Key.t -> Val.t (* -> flags *) -> (unit, int) Result.t
+    val bpf_map_update_elem : bpf_map -> Key.t -> Val.t (* -> flags *) -> unit
     (** [bpf_map_update_elem map k v flags] updates the value
         associated the key [k] to [v]. If key is invalid or the size
         of key/value is not in sync, it will return an error *)
@@ -136,7 +134,7 @@ module Bpf_maps : sig
     type callback =
       unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
 
-    val init : bpf_map -> callback:callback -> t
+    val init : bpf_map -> callback:callback -> (t -> unit) -> unit
     (** [init bpf_map callback] loads [callback] into the ring buffer
         map provided by [bpf_map]. bpf map is freed by default when
         the OCaml process exits
@@ -144,20 +142,20 @@ module Bpf_maps : sig
         TO BE ADDED [ctx_ptr] allows the callback function to access
         user provided context. *)
 
-    val poll : t -> timeout:int -> (int, int) Result.t
+    val poll : t -> timeout:int -> int
     (** [poll t timeout] polls the ringbuffer to execute the loaded
         callbacks on any pending entries, The function returns if
         there are no entries in the given timeout,
 
-        Error code is returned if soemthing went wrong, Ctrl-C will
+        Error code is returned if something went wrong, Ctrl-C will
         cause -EINTR *)
 
-    val consume : t -> (int, int) Result.t
+    val consume : t -> int
     (** [consume t] runs callbacks on all entries in the ringbuffer
         without event polling. Use this only if trying to squeeze
         extra performance with busy-waiting.
 
-        Error code is returned if soemthing went wrong Ctrl-C will
+        Error code is returned if something went wrong Ctrl-C will
         cause -EINTR *)
   end
 end

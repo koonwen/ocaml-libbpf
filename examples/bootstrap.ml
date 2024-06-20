@@ -66,18 +66,15 @@ let () =
       (* Load ringbuffer map *)
       let map = bpf_object_find_map_by_name obj rb_name in
 
-      (* Install callback to ring buffer *)
-      let rb = Bpf_maps.RingBuffer.init map ~callback:handle_event in
+      (* Set up ring buffer *)
+      Bpf_maps.RingBuffer.init map ~callback:handle_event (fun rb ->
+          Printf.printf "%-8s %-5s %-16s %-7s %-7s %s\n%!" "TIME" "EVENT" "COMM"
+            "PID" "PPID" "FILENAME/EXIT CODE";
 
-      Printf.printf "%-8s %-5s %-16s %-7s %-7s %s\n%!" "TIME" "EVENT" "COMM"
-        "PID" "PPID" "FILENAME/EXIT CODE";
-
-      while !exitting do
-        match Bpf_maps.RingBuffer.poll rb ~timeout:100 with
-        | Ok _ -> ()
-        | Error e ->
-            if e = Sys.sighup then failwith "Hangup"
-            else (
-              Printf.eprintf "Error polling ring buffer, %d" e;
-              exitting := false)
-      done)
+          while !exitting do
+            ignore
+              (try Bpf_maps.RingBuffer.poll rb ~timeout:100
+               with _ ->
+                 exitting := false;
+                 -1)
+          done))
