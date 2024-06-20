@@ -163,5 +163,5 @@
   (language c)
   (names libbpf_stubs)
   (include_dirs root/usr/include))
- (libraries ctypes.stubs ctypes.foreign libbpf_bindings)
+ (libraries ctypes.stubs libbpf_bindings)
  (modules ocaml_libbpf))

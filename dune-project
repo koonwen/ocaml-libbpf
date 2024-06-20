@@ -27,12 +27,23 @@
   dune
   (ctypes
    (>= 0.22.0))
-  (ctypes-foreign (>= 0.22.0)) ; Might want to figure out if this can be dropped because we really use it once
   ppx_deriving
   ppx_expect
   conf-zlib
   conf-clang)
  ; We should be able to remove this / make this optional since it is used for building the c bpf programs
+ (tags
+  (bindings bpf libbpf)))
+
+(package
+ (name ocaml_libbpf_maps)
+ (synopsis "Libbpf maps API")
+ (description "High level API's for interacting with BPF maps in OCaml")
+ (depends
+  (ocaml_libbpf
+   (= :version))
+  (ctypes-foreign
+   (>= 0.22.0)))
  (tags
   (bindings bpf libbpf)))
 

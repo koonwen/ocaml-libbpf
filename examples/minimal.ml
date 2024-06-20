@@ -1,5 +1,6 @@
 open Ocaml_libbpf
-module M = Bpf_maps.Make (Bpf_maps.IntConv) (Bpf_maps.LongConv)
+module M = Ocaml_libbpf_maps
+module Map = M.Make (M.IntConv) (M.LongConv)
 
 let obj_path = "minimal.bpf.o"
 let program_names = [ "handle_tp" ]
@@ -9,7 +10,7 @@ let map = "globals"
 let before_link obj =
   let pid = Unix.getpid () |> Signed.Long.of_int in
   let global_map = bpf_object_find_map_by_name obj map in
-  M.bpf_map_update_elem global_map 0 pid
+  Map.bpf_map_update_elem global_map 0 pid
 
 let () =
   with_bpf_object_open_load_link ~obj_path ~program_names ~before_link

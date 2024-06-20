@@ -2,6 +2,7 @@
    /* Copyright (c) 2020 Facebook */ *)
 
 open Ocaml_libbpf
+open Ocaml_libbpf_maps
 open Ctypes
 
 let obj_path = "bootstrap.bpf.o"
@@ -67,13 +68,13 @@ let () =
       let map = bpf_object_find_map_by_name obj rb_name in
 
       (* Set up ring buffer *)
-      Bpf_maps.RingBuffer.init map ~callback:handle_event (fun rb ->
+      RingBuffer.init map ~callback:handle_event (fun rb ->
           Printf.printf "%-8s %-5s %-16s %-7s %-7s %s\n%!" "TIME" "EVENT" "COMM"
             "PID" "PPID" "FILENAME/EXIT CODE";
 
           while !exitting do
             ignore
-              (try Bpf_maps.RingBuffer.poll rb ~timeout:100
+              (try RingBuffer.poll rb ~timeout:100
                with _ ->
                  exitting := false;
                  -1)
