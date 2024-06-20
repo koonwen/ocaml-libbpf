@@ -81,10 +81,9 @@ let with_bpf_object_open_load_link ~obj_path ~program_names
     failwith_f "Failed to find %s programs" (String.concat "," not_found));
 
   (* Run before_link user initialization code *)
-  (try before_link obj
-   with e ->
-     bpf_object_close obj;
-     raise e);
+  Fun.protect
+    ~finally:(fun () -> bpf_object_close obj)
+    (fun () -> before_link obj);
 
   (* Get list of links *)
   let links, not_attached =
@@ -101,10 +100,7 @@ let with_bpf_object_open_load_link ~obj_path ~program_names
     failwith_f "Failed to link %s programs" (String.concat "," not_attached));
 
   (* Run user program *)
-  (try fn obj links
-   with e ->
-     cleanup ~links obj;
-     raise e);
+  Fun.protect ~finally:(fun () -> cleanup ~links obj) (fun () -> fn obj links);
 
   (* Ensure proper shutdown *)
   cleanup ~links obj
