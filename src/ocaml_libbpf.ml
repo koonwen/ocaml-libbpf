@@ -99,7 +99,6 @@ let with_bpf_object_open_load_link ~obj_path ~program_names
     (* Detached successfully attached before shutdown *)
     cleanup ~links obj;
     failwith_f "Failed to link %s programs" (String.concat "," not_attached));
-  Printf.printf "IM HERE\n%!";
 
   (* Run user program *)
   (try fn obj links

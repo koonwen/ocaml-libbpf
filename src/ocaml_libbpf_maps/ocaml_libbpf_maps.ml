@@ -21,21 +21,11 @@ module RingBuffer = struct
       | None -> failwith "Failed to create ring buffer\n"
       | Some rb -> rb
     in
-    Fun.protect
-      ~finally:(fun () -> C.Functions.ring_buffer__free rb)
-      (fun () -> f rb)
+    try f rb
+    with e ->
+      C.Functions.ring_buffer__free rb;
+      raise e
 
-  let poll t ~timeout =
-    let ret = C.Functions.ring_buffer__poll t timeout in
-    if ret >= 0 then ret
-    else
-      let err = Printf.sprintf "ring_buffer__poll got %d" ret in
-      raise (Sys_error err)
-
-  let consume t =
-    let ret = C.Functions.ring_buffer__consume t in
-    if ret >= 0 then ret
-    else
-      let err = Printf.sprintf "ring_buffer__consume got %d" ret in
-      raise (Sys_error err)
+  let poll t ~timeout = C.Functions.ring_buffer__poll t timeout
+  let consume t = C.Functions.ring_buffer__consume t
 end
