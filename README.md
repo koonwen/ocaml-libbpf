@@ -19,23 +19,72 @@ of currently bound API's. Contributions are welcome.
 
 # Usage
 See `examples` directory on how ocaml\_libbpf can be used to interact
-with eBPF programs defined in *.bpf.c source files. The high-level
-API's provided in ocaml\_libbpf make it easy to perform repetitive
-tasks like open/load/linking/initializing/teardown. The BPF\_maps module
-also make interacting with maps simpler than the C API.
+with eBPF kernel programs defined in *.bpf.c source files. The
+high-level API's provided in ocaml\_libbpf make it easy to perform
+repetitive tasks like open/load/linking/initializing/teardown.
 
-"To run these examples, use `make <minimal/kprobe/bootstrap>`. These
-examples are taken from
-[libbpf-bootstrap](https://github.com/libbpf/libbpf-bootstrap)
-repository and rewritten in OCaml
+To run these examples, clone this repository and set up the package with
+```bash
+git clone git@github.com:koonwen/ocaml-libbpf.git
+cd ocaml_libbpf
+opam install . --deps-only
+eval $(opam env)
+```
 
-Let's run through an example of how we would use ocaml\_libbpf
+then use `make <minimal/kprobe/bootstrap>`. These examples are taken
+from [libbpf-bootstrap](https://github.com/libbpf/libbpf-bootstrap)
+repository and rewritten in OCaml.
 
 ### Open/Load/Link
-Loading eBPF programs into the kernel are often repetitive and
-tedious, ocaml\_libbpf provides an easy API to do this, users need to
-provide the path to the compiled bpf object, the name of the program
-and optionally an initialization function.
+Now let's run through an example of how we would use
+ocaml\_libbpf. This usage tutorial assumes some knowledge of how to
+write eBPF programs in C. If not, you can check out this
+[resource](https://nakryiko.com/posts/libbpf-bootstrap/#the-bpf-side). ocaml\_libbpf
+provides an easy API to install your eBPF program into the kernel. Say
+your eBPF kernel program looks like this.
+
+```c
+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+/* Copyright (c) 2020 Facebook */
+#include <linux/bpf.h>
+#include "bpf/bpf_helpers.h" /* This is from our libbpf library */
+
+char LICENSE[] SEC("license") = "Dual BSD/GPL";
+
+/* Globals implemented as an array */
+struct {
+  __uint(type, BPF_MAP_TYPE_ARRAY);
+  __uint(max_entries, 1);
+  __type(key, int);
+  __type(value, long);
+} globals SEC(".maps");
+
+int my_pid_index = 0;
+
+SEC("tp/syscalls/sys_enter_write")
+int handle_tp(void *ctx) {
+  int pid = bpf_get_current_pid_tgid() >> 32;
+
+  long *my_pid;
+  my_pid = bpf_map_lookup_elem(&globals, &my_pid_index);
+  if (my_pid == NULL) {
+    bpf_printk("Error got NULL");
+    return 1;
+  };
+
+  if (pid != *my_pid)
+    return 0;
+
+  bpf_printk("Hello, BPF triggered from PID %d", pid);
+
+  return 0;
+}
+
+```
+
+Users just need to provide the path to the compiled bpf
+object, the name of the program and optionally an initialization
+function.
 
 ```ocaml
 let obj_path = "minimal.bpf.o"
@@ -76,12 +125,7 @@ example usage of them can be found in
 [examples/bootstrap.ml](./examples/bootstrap.ml). This has been
 packaged separately since it drags in `libffi` dependency.
 
-## TODO
-- [X] Generate vmlinux
-- [ ] BPF CORE bindings?
-- [ ] Add generated odoc
-
-## Would be nice to support
+### Would be nice to support
 - [ ] Integration with bpftool & bindings for generated skel code
 
 # Developer Notes
