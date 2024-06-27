@@ -188,5 +188,4 @@ module Functions (F : Ctypes.FOREIGN) = struct
       buffer manager *)
   let ring_buffer__free =
     foreign "ring_buffer__free" (ptr Types.ring_buffer @-> returning void)
-
 end

@@ -2,12 +2,7 @@ open Ctypes
 module C : module type of C
 
 type bpf_object = C.Types.bpf_object structure ptr
-
-type bpf_program = {
-  name : string;
-  ptr : C.Types.bpf_program structure ptr;
-}
-
+type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
 type bpf_link = C.Types.bpf_link structure ptr
 
@@ -80,12 +75,7 @@ val with_bpf_object_open_load_link :
     cleanup of bpf_object resources and links *)
 
 val bpf_map_lookup_value :
-  key_ty:'a typ ->
-  val_ty:'b typ ->
-  val_zero:'b ->
-  bpf_map ->
-  'a ->
-  'b
+  key_ty:'a typ -> val_ty:'b typ -> val_zero:'b -> bpf_map -> 'a -> 'b
 (** [bpf_map_lookup_value key_ty val_ty val_zero map k flags] Looks
       up the value associated with the key [k]. If key is invalid, no
       value is found or the size of key/value is not in sync, it will
@@ -95,12 +85,7 @@ val bpf_map_lookup_value :
       will be overwritten.  *)
 
 val bpf_map_update_elem :
-  key_ty:'a typ ->
-  val_ty:'b typ ->
-  bpf_map ->
-  'a ->
-  'b (* -> flags *) ->
-  unit
+  key_ty:'a typ -> val_ty:'b typ -> bpf_map -> 'a -> 'b (* -> flags *) -> unit
 (** [bpf_map_update_elem key_ty val_ty map k v flags] updates the
       value associated the key [k] to [v]. If key is invalid or the
       size of key/value is not in sync, it will return an

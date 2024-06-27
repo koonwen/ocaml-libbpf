@@ -1,5 +1,4 @@
 open Ctypes
-
 module C = C
 
 type bpf_object = C.Types.bpf_object structure ptr

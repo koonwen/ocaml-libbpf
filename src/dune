@@ -3,7 +3,8 @@
  (ctypes
   (external_library_name libbpf)
   (build_flags_resolver pkg_config)
-  (headers (include bpf/libbpf.h))
+  (headers
+   (include bpf/libbpf.h))
   (type_description
    (instance Types)
    (functor Type_description))
