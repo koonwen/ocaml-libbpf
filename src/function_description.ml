@@ -15,20 +15,19 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let libbpf_minor_version =
     foreign "libbpf_minor_version" (void @-> returning uint32_t)
 
+  let libbpf_version_string =
+    foreign "libbpf_version_string" (void @-> returning (ptr char))
+
   let libbpf_strerror =
     foreign "libbpf_strerror" (int @-> ptr char @-> size_t @-> returning int)
 
-  let libbpf_get_error = foreign "libbpf_get_error" (ptr void @-> returning long)
-  [@@alert unsafe "does not support flag set"]
-
-  let libbpf_set_strict_mode =
-    foreign "libbpf_set_strict_mode"
-      (Types.Libbpf_legacy.enum_libbpf_strict_mode @-> returning void)
-  [@@alert unsafe "incomplete implementation"]
-
   let libbpf_bpf_attach_type_str =
     foreign "libbpf_bpf_attach_type_str"
-      (Types.Attach_type.bpf_attach_type @-> returning string)
+      (Types.Bpf_attach_type.t @-> returning (ptr char))
+
+  let libbpf_bpf_link_type_str =
+    foreign "libbpf_bpf_link_type_str"
+      (Types.Bpf_link_type.t @-> returning (ptr char))
 
   (* ================================= Open / Load / Close  =================================== *)
 

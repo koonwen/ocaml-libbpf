@@ -1,6 +1,12 @@
 open Ctypes
 module C = C
 
+let major () = C.Functions.libbpf_major_version () |> Unsigned.UInt32.to_int
+let minor () = C.Functions.libbpf_minor_version () |> Unsigned.UInt32.to_int
+
+let version () =
+  C.Functions.libbpf_version_string () |> Ctypes_std_views.string_of_char_ptr
+
 type bpf_object = C.Types.bpf_object structure ptr
 type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
@@ -46,10 +52,6 @@ let bpf_object_close bpf_object = C.Functions.bpf_object__close bpf_object
 
 let with_bpf_object_open_load_link ~obj_path ~program_names
     ?(before_link = Stdlib.ignore) fn =
-  (* Implicitly bump RLIMIT_MEMLOCK to create BPF maps *)
-  C.Functions.libbpf_set_strict_mode
-    C.Types.Libbpf_legacy.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
-
   let obj = bpf_object_open obj_path in
   bpf_object_load obj;
 
