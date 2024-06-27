@@ -9,7 +9,7 @@ module RingBuffer = struct
     (* Coerce it to the static_funptr so it can be passed to the C function *)
     let callback_c =
       coerce
-        (Foreign.funptr ~runtime_lock:false ~check_errno:true
+        (Foreign.funptr ~runtime_lock:true ~check_errno:true
            (ptr void @-> ptr void @-> size_t @-> returning int))
         C.Types.ring_buffer_sample_fn callback
     in
