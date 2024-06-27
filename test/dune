@@ -1,5 +1,5 @@
-(executables
- (names test_version)
+(test
+ (name test_version)
  (libraries ocaml_libbpf unix))
 
 (rule

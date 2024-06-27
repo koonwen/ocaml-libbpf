@@ -23,12 +23,4 @@ module RingBuffer : sig
 
         Error code is returned if something went wrong, Ctrl-C will
         cause -EINTR *)
-
-  val consume : t -> int
-  (** [consume t] runs callbacks on all entries in the ringbuffer
-        without event polling. Use this only if trying to squeeze
-        extra performance with busy-waiting.
-
-        Error code is returned if something went wrong Ctrl-C will
-        cause -EINTR *)
 end

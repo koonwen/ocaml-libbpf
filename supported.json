@@ -20,10 +20,5 @@
     "ring_buffer__new",
     "ring_buffer__poll",
     "ring_buffer__free",
-    "ring_buffer__consume",
-    "ring_buffer__ring",
-    "ring__consumer_pos",
-    "ring__producer_pos",
-    "ring__avail_data_size"
   ]
 }

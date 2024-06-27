@@ -38,16 +38,24 @@ dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
 # Fix to kernel >= 5.15 to allow executing syscalls
 available: [ os = "linux" &
 	   (( os-distribution = "debian" & os-version >= "12" )    |      # Linux 6.1
- 	    ( os-distribution = "ubuntu" & os-version >= "22.04" ) |      # Linux 5.15
-	    ( os-distribution = "fedora" & os-version >= "36" )    |      # Linux 5.17
-	    ( os-distribution = "opensuse-leap" & os-version >= "15.6" )) # Linux 6.14
+ 	    ( os-distribution = "ubuntu" & os-version >= "23.04" ) |      # Linux 6.2
+	    ( os-distribution = "fedora" & os-version >= "38" )    |      # Linux 6.2
+	    ( os-distribution = "opensuse-leap" & os-version >= "15.6" )) # Linux 6.4
 	   ]
 
 # Need to extend to the rest of the linux distros
 depexts: [
+  # libbpf
+  ["libbpf-dev"] {os-distribution = "ubuntu"     # 1.1.0
+                | os-distribution = "debian"     # 1.1.0
+		| os-distribution = "opensuse" } # 1.2.2
+  ["libbpf-devel"] {os-distribution = "fedora"}  # 1.1.0
+
   [ "linux-tools-common" ] {os-distribution = "ubuntu"}
-  ["bpftool"] {os-distribution = "debian" | "fedora"}
-  ["libelf-dev"] {os-distribution = "debian"| os-distribution = "ubuntu" }
-  ["libelf-devel"] {os-distribution = "opensuse"}
-  ["elfutils-libelf-devel"] {os-distribution = "fedora"}
+  ["bpftool"] {os-distribution = "debian" | "fedora" | "opensuse-leap" }
+
+  # # libelf
+  # ["libelf-dev"] {os-distribution = "debian"| os-distribution = "ubuntu" }
+  # ["libelf-devel"] {os-distribution = "opensuse"}
+  # ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

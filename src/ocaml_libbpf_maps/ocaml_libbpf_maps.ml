@@ -27,5 +27,4 @@ module RingBuffer = struct
       raise e
 
   let poll t ~timeout = C.Functions.ring_buffer__poll t timeout
-  let consume t = C.Functions.ring_buffer__consume t
 end

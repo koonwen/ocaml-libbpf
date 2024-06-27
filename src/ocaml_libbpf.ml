@@ -1,9 +1,6 @@
 open Ctypes
 
-module C = struct
-  module Types = Libbpf_bindings.Types
-  module Functions = Libbpf_bindings.Functions
-end
+module C = C
 
 type bpf_object = C.Types.bpf_object structure ptr
 type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
