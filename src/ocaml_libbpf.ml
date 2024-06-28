@@ -27,7 +27,13 @@ let bpf_prog_type_str prog_type =
   |> Ctypes_std_views.string_of_char_ptr
 
 type bpf_object = C.Types.bpf_object structure ptr
-type bpf_program = { name : string; fd: int; ptr : C.Types.bpf_program structure ptr }
+
+type bpf_program = {
+  name : string;
+  fd : int;
+  ptr : C.Types.bpf_program structure ptr;
+}
+
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
 type bpf_link = C.Types.bpf_link structure ptr
 
@@ -55,14 +61,14 @@ let bpf_program_attach ({ name; ptr; _ } : bpf_program) =
   | Some link -> link
   | None -> failwith_f "Error attaching program %s" name
 
-let bpf_program_fd (prog:bpf_program) = prog.fd
+let bpf_program_fd (prog : bpf_program) = prog.fd
 
 let bpf_object_find_map_by_name bpf_object name =
   match C.Functions.bpf_object__find_map_by_name bpf_object name with
   | Some ptr -> { fd = C.Functions.bpf_map__fd ptr; ptr }
   | None -> failwith_f "Map %s not found" name
 
-let bpf_map_fd (map:bpf_map) = map.fd
+let bpf_map_fd (map : bpf_map) = map.fd
 
 let bpf_link_destroy bpf_link =
   match C.Functions.bpf_link__destroy bpf_link with

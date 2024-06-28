@@ -115,8 +115,7 @@ module Functions (F : Ctypes.FOREIGN) = struct
       (ptr Types.bpf_program @-> returning (ptr_opt Types.bpf_link))
 
   let bpf_program__fd =
-    foreign "bpf_program__fd"
-      (ptr Types.bpf_program @-> returning int)
+    foreign "bpf_program__fd" (ptr Types.bpf_program @-> returning int)
 
   (** [bpf_link__pin link path] pins the BPF link to a file in the
       BPF FS specified by a path. This increments the links reference

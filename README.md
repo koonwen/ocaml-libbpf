@@ -125,20 +125,23 @@ example usage of them can be found in
 [examples/bootstrap.ml](./examples/bootstrap.ml). This has been
 packaged separately since it drags in `libffi` dependency.
 
-### Would be nice to support
-- [ ] Integration with bpftool & bindings for generated skel code
+### External dependencies
+ocaml\_libbpf depends on the system package of `libbpf`. This is
+automatically installed along with ocaml_libbpf
 
-# Developer Notes
-## Build
-libbpf API's provide both userland and kernel API's. Typically,
-bpf_helpers.h, bpf_core_read.h, bpf_tracing.h define the
-kernel API's. Userland API definitions are found in libbpf.h
+## Notes on compatibility
+> Libbpf is designed to be kernel-agnostic and work across multitude
+> of kernel versions. It has built-in mechanisms to gracefully handle
+> older kernels, that are missing some of the features, by working
+> around or gracefully degrading functionality.
 
-## Kernel compatibility
-No ties to any specific kernel, transparent handling of older
-kernels. Libbpf is designed to be kernel-agnostic and work across
-multitude of kernel versions. It has built-in mechanisms to gracefully
-handle older kernels, that are missing some of the features, by
-working around or gracefully degrading functionality. Thus libbpf is
-not tied to a specific kernel version and can/should be packaged and
-versioned independently.
+Vendoring libbpf was a option. However, since bpf programs require
+writing the kernel components that may use libbpf, we made the choice
+to use the system's package versioned instead. This avoids users from
+knowingly/unknowingly using libbpf API's from two different
+versions. As a consequence, this library support operating systems
+that package libbpf.v.1.1 and up. Check ocaml-ci for the list of
+operating systems that successfully builds.
+
+If so desired, you can also checkout the `vendored` branch in this
+repo which builds ocaml_libbpf with the latest libbpf package.
