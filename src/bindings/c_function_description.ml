@@ -114,6 +114,10 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_program__attach"
       (ptr Types.bpf_program @-> returning (ptr_opt Types.bpf_link))
 
+  let bpf_program__fd =
+    foreign "bpf_program__fd"
+      (ptr Types.bpf_program @-> returning int)
+
   (** [bpf_link__pin link path] pins the BPF link to a file in the
       BPF FS specified by a path. This increments the links reference
       count, allowing it to stay loaded after the process which loaded
@@ -213,6 +217,22 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let bpf_map__delete_elem =
     foreign "bpf_map__delete_elem"
       (ptr Types.bpf_map @-> ptr void @-> size_t @-> uint64_t @-> returning int)
+
+  (* ================================== Traffic control ================================== *)
+
+  let bpf_tc_hook_create =
+    foreign "bpf_tc_hook_create" (ptr Types.Bpf_tc.hook @-> returning int)
+
+  let bpf_tc_hook_destroy =
+    foreign "bpf_tc_hook_destroy" (ptr Types.Bpf_tc.hook @-> returning int)
+
+  let bpf_tc_attach =
+    foreign "bpf_tc_attach"
+      (ptr Types.Bpf_tc.hook @-> ptr Types.Bpf_tc.Opts.t @-> returning int)
+
+  let bpf_tc_detach =
+    foreign "bpf_tc_detach"
+      (ptr Types.Bpf_tc.hook @-> ptr Types.Bpf_tc.Opts.t @-> returning int)
 
   (* ====================================== RingBuf ===================================== *)
 

@@ -349,19 +349,45 @@ module Types (F : Ctypes.TYPE) = struct
   let bpf_link : bpf_link structure typ = structure "bpf_link"
   let bpf_map : bpf_map structure typ = structure "bpf_map"
 
-  type ring
-  type ring_buffer
-  type ring_buffer_opts
-  type ring_buffer_sample_fn = unit ptr -> unit ptr -> Unsigned.size_t -> int
-
-  let ring_buffer_sample_fn : ring_buffer_sample_fn static_funptr typ =
+  let ring_buffer_sample_fn :
+      (unit ptr -> unit ptr -> Unsigned.size_t -> int) static_funptr typ =
     typedef
       (static_funptr (ptr void @-> ptr void @-> size_t @-> returning int))
       "ring_buffer_sample_fn"
 
-  let ring : ring structure typ = structure "ring"
-  let ring_buffer : ring_buffer structure typ = structure "ring_buffer"
+  let ring_buffer : [ `Ring_buffer ] structure typ = structure "ring_buffer"
 
-  let ring_buffer_opts : ring_buffer_opts structure typ =
+  let ring_buffer_opts : [ `Ring_buffer_opts ] structure typ =
     structure "ring_buffer_opts"
+
+  module Bpf_tc = struct
+    let attach_point : [ `INGRESS | `EGRESS | `CUSTOM ] typ =
+      let def = c ~prefix:"BPF_TC_" in
+      enum "bpf_tc_attach_point"
+        [
+          (`INGRESS, def "INGRESS");
+          (`EGRESS, def "EGRESS");
+          (`CUSTOM, def "CUSTOM");
+        ]
+
+    module Opts = struct
+      let t : [ `Opts ] structure typ = structure "bpf_tc_opts"
+      let ( -: ) ty label = field t label ty
+      let sz = size_t -: "sz"
+      let prog_fd = int -: "prog_fd"
+      let flags = uint32_t -: "flags"
+      let prog_id = uint32_t -: "prog_id"
+      let handle = uint32_t -: "handle"
+      let priority = uint32_t -: "priority"
+      let () = seal t
+    end
+
+    let hook : [ `Hook ] structure typ = structure "bpf_tc_hook"
+    let ( -: ) ty label = field hook label ty
+    let sz = size_t -: "sz"
+    let ifindex = int -: "ifindex"
+    let attach_point = attach_point -: "attach_point"
+    let parent = uint32_t -: "parent"
+    let () = seal hook
+  end
 end

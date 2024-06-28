@@ -2,8 +2,10 @@ open Ocaml_libbpf
 open Ctypes
 
 module RingBuffer = struct
-  type t = C.Types.ring_buffer structure ptr
-  type callback = C.Types.ring_buffer_sample_fn
+  type t = [ `Ring_buffer ] structure ptr
+
+  type callback =
+    unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
 
   let init bpf_map ~callback f =
     (* Coerce it to the static_funptr so it can be passed to the C function *)

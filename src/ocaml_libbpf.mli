@@ -10,7 +10,13 @@ val bpf_map_type_str : C.Types.Bpf_map_type.t -> string
 val bpf_prog_type_str : C.Types.Bpf_prog_type.t -> string
 
 type bpf_object = C.Types.bpf_object structure ptr
-type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
+
+type bpf_program = {
+  name : string;
+  fd : int;
+  ptr : C.Types.bpf_program structure ptr;
+}
+
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
 type bpf_link = C.Types.bpf_link structure ptr
 
@@ -49,6 +55,9 @@ val bpf_program_attach : bpf_program -> bpf_link
     space
 
     Fails if link could not be attached *)
+
+val bpf_program_fd : bpf_program -> int
+(** [bpf_map_fd prog] returns the fd of the [prog] *)
 
 val bpf_object_find_map_by_name : bpf_object -> string -> bpf_map
 (** [bpf_object_find_map_by_name obj name] locates the bpf_map

@@ -1,5 +1,5 @@
 (executables
- (names sockfilter tc bootstrap bootstrap_c kprobe minimal)
+ (names tc bootstrap bootstrap_c kprobe minimal)
  (libraries ocaml_libbpf ocaml_libbpf_maps))
 
 ; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
