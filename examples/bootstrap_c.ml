@@ -8,7 +8,6 @@ let rb_name = "rb"
 exception Exit of int
 
 let main () =
-
   (* Set signal handlers *)
   let exitting = ref true in
   let sig_handler = Sys.Signal_handle (fun _ -> exitting := false) in
