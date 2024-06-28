@@ -1,11 +1,30 @@
 open Ctypes
 module C = C
 
-let major () = C.Functions.libbpf_major_version () |> Unsigned.UInt32.to_int
-let minor () = C.Functions.libbpf_minor_version () |> Unsigned.UInt32.to_int
+let major_version =
+  C.Functions.libbpf_major_version () |> Unsigned.UInt32.to_int
 
-let version () =
+let minor_version =
+  C.Functions.libbpf_minor_version () |> Unsigned.UInt32.to_int
+
+let version_string =
   C.Functions.libbpf_version_string () |> Ctypes_std_views.string_of_char_ptr
+
+let bpf_attach_type_str attach_type =
+  C.Functions.libbpf_bpf_attach_type_str attach_type
+  |> Ctypes_std_views.string_of_char_ptr
+
+let bpf_link_type_str link_type =
+  C.Functions.libbpf_bpf_link_type_str link_type
+  |> Ctypes_std_views.string_of_char_ptr
+
+let bpf_map_type_str map_type =
+  C.Functions.libbpf_bpf_map_type_str map_type
+  |> Ctypes_std_views.string_of_char_ptr
+
+let bpf_prog_type_str prog_type =
+  C.Functions.libbpf_bpf_prog_type_str prog_type
+  |> Ctypes_std_views.string_of_char_ptr
 
 type bpf_object = C.Types.bpf_object structure ptr
 type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }

@@ -1,6 +1,14 @@
 open Ctypes
 module C : module type of C
 
+val major_version : int
+val minor_version : int
+val version_string : string
+val bpf_attach_type_str : C.Types.Bpf_attach_type.t -> string
+val bpf_link_type_str : C.Types.Bpf_link_type.t -> string
+val bpf_map_type_str : C.Types.Bpf_map_type.t -> string
+val bpf_prog_type_str : C.Types.Bpf_prog_type.t -> string
+
 type bpf_object = C.Types.bpf_object structure ptr
 type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }

@@ -23,9 +23,8 @@ module Types (F : Ctypes.TYPE) = struct
       | `NLPARSE (* netlink parsing error *)
       | `UNKNOWN ]
 
-    let def = c ~prefix:"LIBBPF_ERRNO__"
-
     let t : t typ =
+      let def = c ~prefix:"LIBBPF_ERRNO__" in
       enum "libbpf_errno"
         ~unexpected:(fun _ -> `UNKNOWN)
         [
@@ -100,12 +99,11 @@ module Types (F : Ctypes.TYPE) = struct
 
     type t = [ cgroup | sk | trace | xdp | other | `UNKNOWN ]
 
-    let cgroup = c ~prefix:"BPF_CGROUP_"
-    let sk = c ~prefix:"BPF_SK_"
-    let trace = c ~prefix:"BPF_TRACE_"
-    let xdp = c ~prefix:"BPF_XDP_"
-
     let t : t typ =
+      let cgroup = c ~prefix:"BPF_CGROUP_" in
+      let sk = c ~prefix:"BPF_SK_" in
+      let trace = c ~prefix:"BPF_TRACE_" in
+      let xdp = c ~prefix:"BPF_XDP_" in
       enum "bpf_attach_type"
         ~unexpected:(fun _ -> `UNKNOWN)
         [
@@ -170,9 +168,8 @@ module Types (F : Ctypes.TYPE) = struct
       | `STRUCT_OPS
       | `UNKNOWN ]
 
-    let def = c ~prefix:"BPF_LINK_TYPE_"
-
     let t : t typ =
+      let def = c ~prefix:"BPF_LINK_TYPE_" in
       enum "bpf_link_type"
         ~unexpected:(fun _ -> `UNKNOWN)
         [
@@ -186,6 +183,159 @@ module Types (F : Ctypes.TYPE) = struct
           (`PERF_EVENT, def "PERF_EVENT");
           (`KPROBE_MULTI, def "KPROBE_MULTI");
           (`STRUCT_OPS, def "STRUCT_OPS");
+        ]
+  end
+
+  module Bpf_map_type = struct
+    type t =
+      [ `UNSPEC
+      | `HASH
+      | `ARRAY
+      | `PROG_ARRAY
+      | `PERF_EVENT_ARRAY
+      | `PERCPU_HASH
+      | `PERCPU_ARRAY
+      | `STACK_TRACE
+      | `CGROUP_ARRAY
+      | `LRU_HASH
+      | `LRU_PERCPU_HASH
+      | `LPM_TRIE
+      | `ARRAY_OF_MAPS
+      | `HASH_OF_MAPS
+      | `DEVMAP
+      | `SOCKMAP
+      | `CPUMAP
+      | `XSKMAP
+      | `SOCKHASH
+      | `CGROUP_STORAGE
+      | `REUSEPORT_SOCKARRAY
+      | `PERCPU_CGROUP_STORAGE
+      | `QUEUE
+      | `STACK
+      | `SK_STORAGE
+      | `DEVMAP_HASH
+      | `STRUCT_OPS
+      | `RINGBUF
+      | `INODE_STORAGE
+      | `TASK_STORAGE
+      | `BLOOM_FILTER
+      | `USER_RINGBUF
+      | `UNKNOWN ]
+
+    let def = c ~prefix:"BPF_MAP_TYPE_"
+
+    let t : t typ =
+      enum "bpf_map_type"
+        ~unexpected:(fun _ -> `UNKNOWN)
+        [
+          (`UNSPEC, def "UNSPEC");
+          (`HASH, def "HASH");
+          (`ARRAY, def "ARRAY");
+          (`PROG_ARRAY, def "PROG_ARRAY");
+          (`PERF_EVENT_ARRAY, def "PERF_EVENT_ARRAY");
+          (`PERCPU_HASH, def "PERCPU_HASH");
+          (`PERCPU_ARRAY, def "PERCPU_ARRAY");
+          (`STACK_TRACE, def "STACK_TRACE");
+          (`CGROUP_ARRAY, def "CGROUP_ARRAY");
+          (`LRU_HASH, def "LRU_HASH");
+          (`LRU_PERCPU_HASH, def "LRU_PERCPU_HASH");
+          (`LPM_TRIE, def "LPM_TRIE");
+          (`ARRAY_OF_MAPS, def "ARRAY_OF_MAPS");
+          (`HASH_OF_MAPS, def "HASH_OF_MAPS");
+          (`DEVMAP, def "DEVMAP");
+          (`SOCKMAP, def "SOCKMAP");
+          (`CPUMAP, def "CPUMAP");
+          (`XSKMAP, def "XSKMAP");
+          (`SOCKHASH, def "SOCKHASH");
+          (`CGROUP_STORAGE, def "CGROUP_STORAGE");
+          (`REUSEPORT_SOCKARRAY, def "REUSEPORT_SOCKARRAY");
+          (`PERCPU_CGROUP_STORAGE, def "PERCPU_CGROUP_STORAGE");
+          (`QUEUE, def "QUEUE");
+          (`STACK, def "STACK");
+          (`SK_STORAGE, def "SK_STORAGE");
+          (`DEVMAP_HASH, def "DEVMAP_HASH");
+          (`STRUCT_OPS, def "STRUCT_OPS");
+          (`RINGBUF, def "RINGBUF");
+          (`INODE_STORAGE, def "INODE_STORAGE");
+          (`TASK_STORAGE, def "TASK_STORAGE");
+          (`BLOOM_FILTER, def "BLOOM_FILTER");
+          (`USER_RINGBUF, def "USER_RINGBUF");
+        ]
+  end
+
+  module Bpf_prog_type = struct
+    type t =
+      [ `UNSPEC
+      | `SOCKET_FILTER
+      | `KPROBE
+      | `SCHED_CLS
+      | `SCHED_ACT
+      | `TRACEPOINT
+      | `XDP
+      | `PERF_EVENT
+      | `CGROUP_SKB
+      | `CGROUP_SOCK
+      | `LWT_IN
+      | `LWT_OUT
+      | `LWT_XMIT
+      | `SOCK_OPS
+      | `SK_SKB
+      | `CGROUP_DEVICE
+      | `SK_MSG
+      | `RAW_TRACEPOINT
+      | `CGROUP_SOCK_ADDR
+      | `LWT_SEG6LOCAL
+      | `LIRC_MODE2
+      | `SK_REUSEPORT
+      | `FLOW_DISSECTOR
+      | `CGROUP_SYSCTL
+      | `RAW_TRACEPOINT_WRITABLE
+      | `CGROUP_SOCKOPT
+      | `TRACING
+      | `STRUCT_OPS
+      | `EXT
+      | `LSM
+      | `SK_LOOKUP
+      | `SYSCALL
+      | `UNKNOWN ]
+
+    let t : t typ =
+      let def = c ~prefix:"BPF_PROG_TYPE_" in
+      enum "bpf_prog_type"
+        ~unexpected:(fun _ -> `UNKNOWN)
+        [
+          (`UNSPEC, def "UNSPEC");
+          (`SOCKET_FILTER, def "SOCKET_FILTER");
+          (`KPROBE, def "KPROBE");
+          (`SCHED_CLS, def "SCHED_CLS");
+          (`SCHED_ACT, def "SCHED_ACT");
+          (`TRACEPOINT, def "TRACEPOINT");
+          (`XDP, def "XDP");
+          (`PERF_EVENT, def "PERF_EVENT");
+          (`CGROUP_SKB, def "CGROUP_SKB");
+          (`CGROUP_SOCK, def "CGROUP_SOCK");
+          (`LWT_IN, def "LWT_IN");
+          (`LWT_OUT, def "LWT_OUT");
+          (`LWT_XMIT, def "LWT_XMIT");
+          (`SOCK_OPS, def "SOCK_OPS");
+          (`SK_SKB, def "SK_SKB");
+          (`CGROUP_DEVICE, def "CGROUP_DEVICE");
+          (`SK_MSG, def "SK_MSG");
+          (`RAW_TRACEPOINT, def "RAW_TRACEPOINT");
+          (`CGROUP_SOCK_ADDR, def "CGROUP_SOCK_ADDR");
+          (`LWT_SEG6LOCAL, def "LWT_SEG6LOCAL");
+          (`LIRC_MODE2, def "LIRC_MODE2");
+          (`SK_REUSEPORT, def "SK_REUSEPORT");
+          (`FLOW_DISSECTOR, def "FLOW_DISSECTOR");
+          (`CGROUP_SYSCTL, def "CGROUP_SYSCTL");
+          (`RAW_TRACEPOINT_WRITABLE, def "RAW_TRACEPOINT_WRITABLE");
+          (`CGROUP_SOCKOPT, def "CGROUP_SOCKOPT");
+          (`TRACING, def "TRACING");
+          (`STRUCT_OPS, def "STRUCT_OPS");
+          (`EXT, def "EXT");
+          (`LSM, def "LSM");
+          (`SK_LOOKUP, def "SK_LOOKUP");
+          (`SYSCALL, def "SYSCALL");
         ]
   end
 

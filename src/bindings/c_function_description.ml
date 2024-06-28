@@ -29,8 +29,13 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "libbpf_bpf_link_type_str"
       (Types.Bpf_link_type.t @-> returning (ptr char))
 
-  (* let libbpf_bpf_map_type_str = failwith "TODO" *)
-  (* let libbpf_bpf_prog_type_str = failwith "TODO" *)
+  let libbpf_bpf_map_type_str =
+    foreign "libbpf_bpf_map_type_str"
+      (Types.Bpf_map_type.t @-> returning (ptr char))
+
+  let libbpf_bpf_prog_type_str =
+    foreign "libbpf_bpf_prog_type_str"
+      (Types.Bpf_prog_type.t @-> returning (ptr char))
 
   (* ================================= Open / Load / Close  =================================== *)
 
@@ -67,6 +72,31 @@ module Functions (F : Ctypes.FOREIGN) = struct
       (ptr Types.bpf_object @-> ptr Types.bpf_program
       @-> returning (ptr Types.bpf_program))
 
+  (** [bpf_program__pin prog path] pins the BPF program to a file in
+      the BPF FS specified by a [path]. This increments the programs
+      reference count, allowing it to stay loaded after the process
+      which loaded it has exited.
+
+      @param prog BPF program to pin, must already be loaded
+      @param path file path in a BPF file system
+      @return 0, on success; negative error code, otherwise *)
+  let bpf_program__pin =
+    foreign "bpf_program__pin"
+      (ptr Types.bpf_program @-> ptr char @-> returning int)
+
+  (** [bpf_program__unpin prog path] unpins the BPF program from a file in the
+      BPFFS specified by a path. This decrements the programs
+      reference count. The file pinning the BPF program can also be
+      unlinked by a different process in which case this function will
+      return an error.
+
+      @param prog BPF program to unpin
+      @param path file path to the pin in a BPF file system
+      @return 0, on success; negative error code, otherwise  *)
+  let bpf_program__unpin =
+    foreign "bpf_program__unpin"
+      (ptr Types.bpf_program @-> ptr char @-> returning int)
+
   (** [bpf_program__attach prog] is a generic function for
       attaching a BPF program based on auto-detection of program type,
       attach type, and extra paremeters, where applicable.
@@ -84,8 +114,30 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_program__attach"
       (ptr Types.bpf_program @-> returning (ptr_opt Types.bpf_link))
 
-  (** [bpf_link__destroy link_ptr] Removes the link to the BPF program.
+  (** [bpf_link__pin link path] pins the BPF link to a file in the
+      BPF FS specified by a path. This increments the links reference
+      count, allowing it to stay loaded after the process which loaded
+      it has exited.
 
+      @param link BPF link to pin, must already be loaded
+      @param path file path in a BPF file system
+      @return 0, on success; negative error code, otherwise *)
+  let bpf_link__pin =
+    foreign "bpf_link__pin" (ptr Types.bpf_link @-> ptr char @-> returning int)
+
+  (** [bpf_link__unpin link path] unpins the BPF link from a file in
+      the BPFFS specified by a path. This decrements the links
+      reference count. The file pinning the BPF link can also be
+      unlinked by a different process in which case this function will
+      return an error.
+
+      @param prog BPF program to unpin
+      @param path file path to the pin in a BPF file system
+      @return 0, on success; negative error code, otherwise *)
+  let bpf_link__unpin =
+    foreign "bpf_link__unpin" (ptr Types.bpf_link @-> returning int)
+
+  (** [bpf_link__destroy link_ptr] Removes the link to the BPF program.
       Returns 0 on success or -errno *)
   let bpf_link__destroy =
     foreign "bpf_link__destroy" (ptr Types.bpf_link @-> returning int)
@@ -190,4 +242,18 @@ module Functions (F : Ctypes.FOREIGN) = struct
       buffer manager *)
   let ring_buffer__free =
     foreign "ring_buffer__free" (ptr Types.ring_buffer @-> returning void)
+
+  (** [ring_buffer__consume ring_buf_ptr] Consume available ring
+      buffer(s) data without event polling.
+
+      Returns number of records consumed across all registered ring
+      buffers (or INT_MAX, whichever is less), or negative number if
+      any of the callbacks return error.  *)
+  let ring_buffer__consume =
+    foreign "ring_buffer__consume" (ptr Types.ring_buffer @-> returning int)
+
+  (** [ring_buffer__epoll_fd ring_buf_ptr] Gets an fd that can be used
+      to sleep until data is available in the ring(s) *)
+  let ring_buffer__epoll_fd =
+    foreign "ring_buffer__epoll_fd" (ptr Types.ring_buffer @-> returning int)
 end

@@ -1,5 +1,5 @@
 let () =
-  let concurrency = Cstubs.sequential in
+  let concurrency = Cstubs.unlocked in
   let errno = Cstubs.ignore_errno in
   match Sys.argv.(1) with
   | "ml" ->
