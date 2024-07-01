@@ -9,17 +9,13 @@ available: [ os = "linux" &
 
 # Need to extend to the rest of the linux distros
 depexts: [
-  # libbpf
-  ["libbpf-dev"] {os-distribution = "ubuntu"     # 1.1.0
-                | os-distribution = "debian"     # 1.1.0
-		| os-distribution = "opensuse" } # 1.2.2
-  ["libbpf-devel"] {os-distribution = "fedora"}  # 1.1.0
+  # libbpf headers and library archive
+  ["libbpf-dev"] { os-distribution = "ubuntu"     # 1.1.0
+                 | os-distribution = "debian"     # 1.1.0
+		 | os-distribution = "opensuse"}  # 1.2.2
+  ["libbpf-devel"] {os-distribution = "fedora"}   # 1.1.0
 
+  # bpftool to generate vmlinux.h
   [ "linux-tools-common" ] {os-distribution = "ubuntu"}
   ["bpftool"] {os-distribution = "debian" | "fedora" | "opensuse-leap" }
-
-  # # libelf
-  # ["libelf-dev"] {os-distribution = "debian"| os-distribution = "ubuntu" }
-  # ["libelf-devel"] {os-distribution = "opensuse"}
-  # ["elfutils-libelf-devel"] {os-distribution = "fedora"}
 ]

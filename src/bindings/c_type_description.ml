@@ -5,6 +5,19 @@ module Types (F : Ctypes.TYPE) = struct
 
   let c ?(prefix = "") label = constant (prefix ^ label) int64_t
 
+  let libbpf_print_level : [ `WARN | `INFO | `DEBUG | `UNEXPECTED ] typ =
+    let def = c ~prefix:"LIBBPF_" in
+    enum "libbpf_print_level"
+      ~unexpected:(fun _ -> `UNEXPECTED)
+      [ (`WARN, def "WARN"); (`INFO, def "INFO"); (`DEBUG, def "DEBUG") ]
+
+  let libbpf_print_fn_t :
+      ([ `WARN | `INFO | `DEBUG | `UNEXPECTED ] -> string -> int) static_funptr
+      typ =
+    typedef
+      (static_funptr (libbpf_print_level @-> string @-> returning int))
+      "ring_buffer_sample_fn"
+
   module Errno = struct
     type t =
       [ `LIBELF (* Something wrong in libelf *)

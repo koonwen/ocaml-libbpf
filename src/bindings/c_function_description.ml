@@ -16,26 +16,29 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "libbpf_minor_version" (void @-> returning uint32_t)
 
   let libbpf_version_string =
-    foreign "libbpf_version_string" (void @-> returning (ptr char))
+    foreign "libbpf_version_string" (void @-> returning string)
 
   let libbpf_strerror =
     foreign "libbpf_strerror" (int @-> ptr char @-> size_t @-> returning int)
 
   let libbpf_bpf_attach_type_str =
     foreign "libbpf_bpf_attach_type_str"
-      (Types.Bpf_attach_type.t @-> returning (ptr char))
+      (Types.Bpf_attach_type.t @-> returning string)
 
   let libbpf_bpf_link_type_str =
     foreign "libbpf_bpf_link_type_str"
-      (Types.Bpf_link_type.t @-> returning (ptr char))
+      (Types.Bpf_link_type.t @-> returning string)
 
   let libbpf_bpf_map_type_str =
-    foreign "libbpf_bpf_map_type_str"
-      (Types.Bpf_map_type.t @-> returning (ptr char))
+    foreign "libbpf_bpf_map_type_str" (Types.Bpf_map_type.t @-> returning string)
 
   let libbpf_bpf_prog_type_str =
     foreign "libbpf_bpf_prog_type_str"
-      (Types.Bpf_prog_type.t @-> returning (ptr char))
+      (Types.Bpf_prog_type.t @-> returning string)
+
+  let libbpf_set_print =
+    foreign "libbpf_set_print"
+      (Types.libbpf_print_fn_t @-> returning Types.libbpf_print_fn_t)
 
   (* ================================= Open / Load / Close  =================================== *)
 
