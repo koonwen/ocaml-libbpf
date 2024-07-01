@@ -1,5 +1,5 @@
 [![OCaml-CI Build Status](https://img.shields.io/endpoint?url=https://ocaml.ci.dev/badge/koonwen/ocaml-libbpf/main&logo=ocaml)](https://ocaml.ci.dev/github/koonwen/ocaml-libbpf)
-- [API documentation](https://ocaml-multicore.github.io/ocaml-uring/uring/index.html)
+- [API documentation](https://koonwen.github.io/ocaml-libbpf/)
 
 # ocaml-libbpf
 Libbpf C-bindings for loading eBPF ELF files into the kernel with OCaml.
