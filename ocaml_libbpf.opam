@@ -35,11 +35,11 @@ build: [
 ]
 dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
 # eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
-# Fix to kernel >= 5.15 to allow executing syscalls
+# Fix to kernel >= 6.1 for definitions of user ring buffers
 available: [ os = "linux" &
 	   (( os-distribution = "debian" & os-version >= "12" )    |      # Linux 6.1
- 	    ( os-distribution = "ubuntu" & os-version >= "22.04" ) |      # Linux 5.15
-	    ( os-distribution = "fedora" & os-version >= "36" )    |      # Linux 5.17
+ 	    ( os-distribution = "ubuntu" & os-version >= "23.04" ) |      # Linux 6.2
+	    ( os-distribution = "fedora" & os-version >= "38" )    |      # Linux 6.2
 	    ( os-distribution = "opensuse-leap" & os-version >= "15.6" )) # Linux 6.14
 	   ]
 
