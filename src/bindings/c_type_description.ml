@@ -16,7 +16,7 @@ module Types (F : Ctypes.TYPE) = struct
       typ =
     typedef
       (static_funptr (libbpf_print_level @-> string @-> returning int))
-      "ring_buffer_sample_fn"
+      "libbpf_print_fn_t"
 
   module Errno = struct
     type t =
