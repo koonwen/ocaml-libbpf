@@ -9,6 +9,9 @@ minimal: build
 kprobe: build
 	sudo $(CWD)/kprobe.exe
 
+tc: build
+	sudo $(CWD)/tc.exe
+
 bootstrap: build
 	sudo $(CWD)/bootstrap.exe
 

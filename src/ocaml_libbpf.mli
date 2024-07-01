@@ -1,20 +1,24 @@
-module C : sig
-  module Types = Libbpf_bindings.Types
-  module Functions = Libbpf_bindings.Functions
-end
+open Ctypes
+module C : module type of C
 
-(* How do I mix these abstract types with the underlying C types so
-   that experienced users can mix the low-level C calls the
-   high and low level API's? *)
-type bpf_object = C.Types.bpf_object Ctypes.structure Ctypes.ptr
+val major_version : int
+val minor_version : int
+val version_string : string
+val bpf_attach_type_str : C.Types.Bpf_attach_type.t -> string
+val bpf_link_type_str : C.Types.Bpf_link_type.t -> string
+val bpf_map_type_str : C.Types.Bpf_map_type.t -> string
+val bpf_prog_type_str : C.Types.Bpf_prog_type.t -> string
+
+type bpf_object = C.Types.bpf_object structure ptr
 
 type bpf_program = {
   name : string;
-  ptr : C.Types.bpf_program Ctypes.structure Ctypes.ptr;
+  fd : int;
+  ptr : C.Types.bpf_program structure ptr;
 }
 
-type bpf_map = { fd : int; ptr : C.Types.bpf_map Ctypes.structure Ctypes.ptr }
-type bpf_link = C.Types.bpf_link Ctypes.structure Ctypes.ptr
+type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
+type bpf_link = C.Types.bpf_link structure ptr
 
 val bpf_object_open : string -> bpf_object
 (** [bpf_object_open path] opens and tries to read the bpf_object
@@ -52,6 +56,9 @@ val bpf_program_attach : bpf_program -> bpf_link
 
     Fails if link could not be attached *)
 
+val bpf_program_fd : bpf_program -> int
+(** [bpf_map_fd prog] returns the fd of the [prog] *)
+
 val bpf_object_find_map_by_name : bpf_object -> string -> bpf_map
 (** [bpf_object_find_map_by_name obj name] locates the bpf_map
     identifier [name] within [obj].
@@ -85,12 +92,7 @@ val with_bpf_object_open_load_link :
     cleanup of bpf_object resources and links *)
 
 val bpf_map_lookup_value :
-  key_ty:'a Ctypes.typ ->
-  val_ty:'b Ctypes.typ ->
-  val_zero:'b ->
-  bpf_map ->
-  'a ->
-  'b
+  key_ty:'a typ -> val_ty:'b typ -> val_zero:'b -> bpf_map -> 'a -> 'b
 (** [bpf_map_lookup_value key_ty val_ty val_zero map k flags] Looks
       up the value associated with the key [k]. If key is invalid, no
       value is found or the size of key/value is not in sync, it will
@@ -100,12 +102,7 @@ val bpf_map_lookup_value :
       will be overwritten.  *)
 
 val bpf_map_update_elem :
-  key_ty:'a Ctypes.typ ->
-  val_ty:'b Ctypes.typ ->
-  bpf_map ->
-  'a ->
-  'b (* -> flags *) ->
-  unit
+  key_ty:'a typ -> val_ty:'b typ -> bpf_map -> 'a -> 'b (* -> flags *) -> unit
 (** [bpf_map_update_elem key_ty val_ty map k v flags] updates the
       value associated the key [k] to [v]. If key is invalid or the
       size of key/value is not in sync, it will return an

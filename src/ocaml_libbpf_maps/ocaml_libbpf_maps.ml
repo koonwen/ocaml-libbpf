@@ -2,14 +2,16 @@ open Ocaml_libbpf
 open Ctypes
 
 module RingBuffer = struct
-  type t = C.Types.ring_buffer structure ptr
-  type callback = C.Types.ring_buffer_sample_fn
+  type t = [ `Ring_buffer ] structure ptr
+
+  type callback =
+    unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
 
   let init bpf_map ~callback f =
     (* Coerce it to the static_funptr so it can be passed to the C function *)
     let callback_c =
       coerce
-        (Foreign.funptr ~runtime_lock:false ~check_errno:true
+        (Foreign.funptr ~runtime_lock:true ~check_errno:true
            (ptr void @-> ptr void @-> size_t @-> returning int))
         C.Types.ring_buffer_sample_fn callback
     in
@@ -28,4 +30,5 @@ module RingBuffer = struct
 
   let poll t ~timeout = C.Functions.ring_buffer__poll t timeout
   let consume t = C.Functions.ring_buffer__consume t
+  let get_epoll_fd t = C.Functions.ring_buffer__epoll_fd t
 end

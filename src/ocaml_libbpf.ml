@@ -1,12 +1,29 @@
 open Ctypes
+module C = C
 
-module C = struct
-  module Types = Libbpf_bindings.Types
-  module Functions = Libbpf_bindings.Functions
-end
+let major_version =
+  C.Functions.libbpf_major_version () |> Unsigned.UInt32.to_int
+
+let minor_version =
+  C.Functions.libbpf_minor_version () |> Unsigned.UInt32.to_int
+
+let version_string = C.Functions.libbpf_version_string ()
+
+let bpf_attach_type_str attach_type =
+  C.Functions.libbpf_bpf_attach_type_str attach_type
+
+let bpf_link_type_str link_type = C.Functions.libbpf_bpf_link_type_str link_type
+let bpf_map_type_str map_type = C.Functions.libbpf_bpf_map_type_str map_type
+let bpf_prog_type_str prog_type = C.Functions.libbpf_bpf_prog_type_str prog_type
 
 type bpf_object = C.Types.bpf_object structure ptr
-type bpf_program = { name : string; ptr : C.Types.bpf_program structure ptr }
+
+type bpf_program = {
+  name : string;
+  fd : int;
+  ptr : C.Types.bpf_program structure ptr;
+}
+
 type bpf_map = { fd : int; ptr : C.Types.bpf_map structure ptr }
 type bpf_link = C.Types.bpf_link structure ptr
 
@@ -26,20 +43,22 @@ let bpf_object_load bpf_object =
 
 let bpf_object_find_program_by_name bpf_object name =
   match C.Functions.bpf_object__find_program_by_name bpf_object name with
-  | Some prog -> { name; ptr = prog }
+  | Some prog -> { name; fd = C.Functions.bpf_program__fd prog; ptr = prog }
   | None -> failwith_f "Program name %s not found" name
 
-let bpf_program_attach ({ name; ptr } : bpf_program) =
+let bpf_program_attach ({ name; ptr; _ } : bpf_program) =
   match C.Functions.bpf_program__attach ptr with
   | Some link -> link
   | None -> failwith_f "Error attaching program %s" name
+
+let bpf_program_fd (prog : bpf_program) = prog.fd
 
 let bpf_object_find_map_by_name bpf_object name =
   match C.Functions.bpf_object__find_map_by_name bpf_object name with
   | Some ptr -> { fd = C.Functions.bpf_map__fd ptr; ptr }
   | None -> failwith_f "Map %s not found" name
 
-let bpf_map_fd { fd; _ } = fd
+let bpf_map_fd (map : bpf_map) = map.fd
 
 let bpf_link_destroy bpf_link =
   match C.Functions.bpf_link__destroy bpf_link with
@@ -50,10 +69,6 @@ let bpf_object_close bpf_object = C.Functions.bpf_object__close bpf_object
 
 let with_bpf_object_open_load_link ~obj_path ~program_names
     ?(before_link = Stdlib.ignore) fn =
-  (* Implicitly bump RLIMIT_MEMLOCK to create BPF maps *)
-  C.Functions.libbpf_set_strict_mode
-    C.Types.Libbpf_legacy.LIBBPF_STRICT_AUTO_RLIMIT_MEMLOCK;
-
   let obj = bpf_object_open obj_path in
   bpf_object_load obj;
 
