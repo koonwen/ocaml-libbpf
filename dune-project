@@ -1,7 +1,5 @@
 (lang dune 3.13)
 
-(using ctypes 0.3)
-
 (name ocaml_libbpf)
 
 (generate_opam_files true)
@@ -13,7 +11,7 @@
 
 (maintainers "Lee Koon Wen")
 
-(license LGPL-2.1-only)
+(license ISC BSD-3-Clause)
 
 (documentation https://url/to/documentation)
 

@@ -45,7 +45,7 @@ available: [ os = "linux" &
 
 # Need to extend to the rest of the linux distros
 depexts: [
-  # libbpf headers and object
+  # libbpf headers and library archive
   ["libbpf-dev"] { os-distribution = "ubuntu"     # 1.1.0
                  | os-distribution = "debian"     # 1.1.0
 		 | os-distribution = "opensuse"}  # 1.2.2
