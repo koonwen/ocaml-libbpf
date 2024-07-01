@@ -11,9 +11,9 @@ available: [ os = "linux" &
 depexts: [
   # libbpf headers and library archive
   ["libbpf-dev"] { os-distribution = "ubuntu"     # 1.1.0
-                 | os-distribution = "debian"     # 1.1.0
-		 | os-distribution = "opensuse"}  # 1.2.2
-  ["libbpf-devel"] {os-distribution = "fedora"}   # 1.1.0
+                 | os-distribution = "debian" }   # 1.1.0
+  ["libbpf-devel"] {os-distribution = "fedora"    # 1.1.0
+  		  | os-distribution = "opensuse"} # 1.2.2
 
   # bpftool to generate vmlinux.h
   [ "linux-tools-common" ] {os-distribution = "ubuntu"}

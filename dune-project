@@ -13,7 +13,7 @@
 
 (license ISC BSD-3-Clause)
 
-(documentation "https://koonwen.github.io/ocaml-libbpf")
+(documentation https://koonwen.github.io/ocaml-libbpf)
 
 (package
  (name ocaml_libbpf)
@@ -27,9 +27,8 @@
    (>= 0.22.0))
   ppx_deriving
   ppx_expect
-  conf-zlib                     ; Should be able to remove this because we install libbpf
+  conf-zlib
   conf-clang)
- ; We should be able to remove this / make this optional since it is used for building the c bpf programs
  (tags
   (bindings bpf libbpf)))
 
@@ -38,10 +37,10 @@
  (synopsis "Libbpf maps API")
  (description "High level API's for interacting with BPF maps in OCaml")
  (depends
+  (ctypes
+   (>= 0.22.0))
   (ocaml_libbpf
    (= :version))
   ctypes-foreign)
  (tags
   (bindings bpf libbpf)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
