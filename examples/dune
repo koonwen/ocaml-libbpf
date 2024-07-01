@@ -8,19 +8,26 @@
  (mode
   (promote (until-clean)))
  (targets minimal.bpf.o)
- (deps arch minimal.bpf.c)
+ (deps
+  arch
+  minimal.bpf.c
+  %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c minimal.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c minimal.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode
   (promote (until-clean)))
  (targets kprobe.bpf.o)
- (deps arch vmlinux.h kprobe.bpf.c)
+ (deps
+  arch
+  vmlinux.h
+  kprobe.bpf.c
+  %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c kprobe.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c kprobe.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode
@@ -29,16 +36,21 @@
  (deps arch vmlinux.h tc.bpf.c)
  (action
   (system
-   "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c tc.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c tc.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode
   (promote (until-clean)))
  (targets bootstrap.bpf.o)
- (deps arch vmlinux.h bootstrap.bpf.c bootstrap.h)
+ (deps
+  arch
+  vmlinux.h
+  bootstrap.bpf.c
+  bootstrap.h
+  %{project_root}/src/root/usr/include/bpf/bpf_helpers.h)
  (action
   (system
-   "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c -D__TARGET_ARCH_%{read:arch}")))
+   "clang -g -O2 -target bpf -I%{project_root}/src/root/usr/include/ -I/usr/include/%{architecture}-linux-gnu/ -c bootstrap.bpf.c -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode

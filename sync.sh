@@ -16,8 +16,6 @@ FILE_MAP=(
 
   ["src/ocaml_libbpf_maps/ocaml_libbpf_maps.ml"]="src/ocaml_libbpf_maps/ocaml_libbpf_maps.ml"
   ["src/ocaml_libbpf_maps/ocaml_libbpf_maps.mli"]="src/ocaml_libbpf_maps/ocaml_libbpf_maps.mli"
-
-  ["examples"]="./"
 )
 
 # Check out the source branch
