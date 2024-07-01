@@ -1,7 +1,7 @@
 [![OCaml-CI Build Status](https://img.shields.io/endpoint?url=https://ocaml.ci.dev/badge/koonwen/ocaml-libbpf/main&logo=ocaml)](https://ocaml.ci.dev/github/koonwen/ocaml-libbpf)
 
 # ocaml-libbpf
-Libbpf C-bindings for loading eBPF ELF files into the kernel.
+Libbpf C-bindings for loading eBPF ELF files into the kernel with OCaml.
 
 Writing eBPF programs consist of two distinct parts. Implementing the
 code that executes in-kernel **and** user-level code responsible for
