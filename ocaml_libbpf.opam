@@ -35,7 +35,7 @@ build: [
 ]
 dev-repo: "git+https://github.com/koonwen/ocaml-libbpf.git"
 # eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
-# Fix to kernel >= 5.15 to allow executing syscalls
+# Fix to kernel >= 6.1 to provide bound BPF map types
 available: [ os = "linux" &
 	   (( os-distribution = "debian" & os-version >= "12" )    |      # Linux 6.1
  	    ( os-distribution = "ubuntu" & os-version >= "23.04" ) |      # Linux 6.2
