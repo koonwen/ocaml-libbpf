@@ -13,7 +13,7 @@
 
 (license ISC BSD-3-Clause)
 
-(documentation https://url/to/documentation)
+(documentation "https://koonwen.github.io/ocaml-libbpf")
 
 (package
  (name ocaml_libbpf)

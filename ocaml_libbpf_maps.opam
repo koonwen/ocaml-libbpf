@@ -4,10 +4,10 @@ synopsis: "Libbpf maps API"
 description: "High level API's for interacting with BPF maps in OCaml"
 maintainer: ["Lee Koon Wen"]
 authors: ["Lee Koon Wen"]
-license: "LGPL-2.1-only"
+license: ["ISC" "BSD-3-Clause"]
 tags: ["bindings" "bpf" "libbpf"]
 homepage: "https://github.com/koonwen/ocaml-libbpf"
-doc: "https://url/to/documentation"
+doc: "https://koonwen.github.io/ocaml-libbpf"
 bug-reports: "https://github.com/koonwen/ocaml-libbpf/issues"
 depends: [
   "dune" {>= "3.13"}
