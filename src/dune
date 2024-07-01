@@ -68,27 +68,27 @@
      usdt.bpf.h)))))
 
 ; Everything below is the bindings generation process using ctypes. It produces
-; two OCaml modules, Libbpf_c_generated_functions and Libbpf_c_generated_types.
+; two OCaml modules, C_function_generated and C_generated_types.
 
-; Type bindings (Libbpf_c_generated_types).
+; Type bindings (C_generated_types).
 
-; Functor of type descriptions to be used in stub generator
-; libbpf_c_type_descriptions.ml -> libbpf_c_type_descriptions.cma/cmxa/cmxs
+; Functor of type description to be used in stub generator
+; c_type_description.ml -> c_type_description.cma/cmxa/cmxs
 
 (library
- (name libbpf_c_type_descriptions)
- (public_name ocaml_libbpf.libbpf_c_type_descriptions)
- (modules libbpf_c_type_descriptions)
+ (name c_type_description)
+ (public_name ocaml_libbpf.c_type_description)
+ (modules c_type_description)
  (libraries ctypes))
 
-; Compile types_bindings_stub_gen with Libbpf_c_type_description.Types
-; functor to output C generator from type descriptions
-; types_binding_stub_gen.ml + libbpf_c_type_descriptions.cma/cmxa/cmxa -> types_binding_stub_gen.exe
+; Compile types_bindings_stub_gen with C_type_description.Types
+; functor to output C generator from type description
+; types_binding_stub_gen.ml + c_type_description.cma/cmxa/cmxa -> types_binding_stub_gen.exe
 
 (executable
  (name gen_type_bindings)
  (modules gen_type_bindings)
- (libraries ctypes.stubs libbpf_c_type_descriptions))
+ (libraries ctypes.stubs c_type_description))
 
 ; Run generator gen_type_bindings.exe to get c source file to generate OCaml module
 ; gen_type_bindings.exe -> gen_type_bindings.c
@@ -110,36 +110,36 @@
    "%{cc} %{deps} -I `dirname %{lib:ctypes:ctypes_cstubs_internals.h}` -I %{ocaml_where} -o %{targets}")))
 
 ; Run generator gen_type_bindings.exe to get
-; libbpf_c_generated_types.ml
-; gen_type_bindings_from_c.exe -> libbpf_c_generated_types.ml
+; c_generated_types.ml
+; gen_type_bindings_from_c.exe -> c_generated_types.ml
 
 (rule
  (with-stdout-to
-  libbpf_c_generated_types.ml
+  c_types_generated.ml
   (run ./gen_type_bindings_from_c.exe)))
 
 ; Function bindings.
 
 (library
- (name libbpf_c_function_descriptions)
- (public_name ocaml_libbpf.libbpf_c_function_descriptions)
+ (name c_function_description)
+ (public_name ocaml_libbpf.c_function_description)
  (flags ; (:standard -w -9-16-27)
   )
  ; (wrapped false)
- (modules libbpf_c_generated_types libbpf_c_function_descriptions)
- (libraries ctypes libbpf_c_type_descriptions))
+ (modules c_types_generated c_function_description)
+ (libraries ctypes c_type_description))
 
 ; Compile gen_function_bindings
 
 (executable
  (name gen_function_bindings)
  (modules gen_function_bindings)
- (libraries ctypes.stubs libbpf_c_function_descriptions))
+ (libraries ctypes.stubs c_function_description))
 
 ; Generate both the function stubs and the generated functions
 
 (rule
- (targets libbpf_stubs.c libbpf_c_generated_functions.ml)
+ (targets libbpf_stubs.c c_function_generated.ml)
  (deps gen_function_bindings.exe)
  (action
   (run %{deps})))
@@ -147,10 +147,10 @@
 ; This is so that we can collate the functions and type bindings
 
 (library
- (name libbpf_bindings)
- (public_name ocaml_libbpf.libbpf_bindings)
- (libraries libbpf_c_function_descriptions)
- (modules libbpf_bindings libbpf_c_generated_functions))
+ (name c)
+ (public_name ocaml_libbpf.c)
+ (libraries c_function_description)
+ (modules c c_function_generated))
 
 ; The Nicely packaged library for users
 
@@ -163,5 +163,5 @@
   (language c)
   (names libbpf_stubs)
   (include_dirs root/usr/include))
- (libraries ctypes.stubs libbpf_bindings)
+ (libraries ctypes.stubs c)
  (modules ocaml_libbpf))

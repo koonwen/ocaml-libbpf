@@ -1,34 +1,31 @@
 open Ocaml_libbpf
-(** Ocaml_libbpf_maps provide a convenient API's for handling maps,
-    currently only Ringbuffers are supported *)
+open Ctypes
 
-module RingBuffer : sig
-  type t
+module RingBuffer = struct
+  type t = C.Types.ring_buffer structure ptr
+  type callback = C.Types.ring_buffer_sample_fn
 
-  type callback =
-    unit Ctypes_static.ptr -> unit Ctypes_static.ptr -> Unsigned.size_t -> int
+  let init bpf_map ~callback f =
+    (* Coerce it to the static_funptr so it can be passed to the C function *)
+    let callback_c =
+      coerce
+        (Foreign.funptr ~runtime_lock:false ~check_errno:true
+           (ptr void @-> ptr void @-> size_t @-> returning int))
+        C.Types.ring_buffer_sample_fn callback
+    in
+    let rb =
+      match
+        C.Functions.ring_buffer__new bpf_map.fd callback_c null
+          (from_voidp C.Types.ring_buffer_opts null)
+      with
+      | None -> failwith "Failed to create ring buffer\n"
+      | Some rb -> rb
+    in
+    try f rb
+    with e ->
+      C.Functions.ring_buffer__free rb;
+      raise e
 
-  val init : bpf_map -> callback:callback -> (t -> unit) -> unit
-  (** [init bpf_map callback] loads [callback] into the ring buffer
-        map provided by [bpf_map]. bpf map is freed by default when
-        the OCaml process exits
-
-        TO BE ADDED [ctx_ptr] allows the callback function to access
-        user provided context. *)
-
-  val poll : t -> timeout:int -> int
-  (** [poll t timeout] polls the ringbuffer to execute the loaded
-        callbacks on any pending entries, The function returns if
-        there are no entries in the given timeout,
-
-        Error code is returned if something went wrong, Ctrl-C will
-        cause -EINTR *)
-
-  val consume : t -> int
-  (** [consume t] runs callbacks on all entries in the ringbuffer
-        without event polling. Use this only if trying to squeeze
-        extra performance with busy-waiting.
-
-        Error code is returned if something went wrong Ctrl-C will
-        cause -EINTR *)
+  let poll t ~timeout = C.Functions.ring_buffer__poll t timeout
+  let consume t = C.Functions.ring_buffer__consume t
 end
