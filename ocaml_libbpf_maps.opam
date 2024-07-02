@@ -12,8 +12,8 @@ bug-reports: "https://github.com/koonwen/ocaml-libbpf/issues"
 depends: [
   "dune" {>= "3.13"}
   "ctypes" {>= "0.22.0"}
+  "ctypes-foreign" {>= "0.22.0"}
   "ocaml_libbpf" {= version}
-  "ctypes-foreign"
   "odoc" {with-doc}
 ]
 build: [

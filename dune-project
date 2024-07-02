@@ -39,8 +39,9 @@
  (depends
   (ctypes
    (>= 0.22.0))
+  (ctypes-foreign
+   (>= 0.22.0))
   (ocaml_libbpf
-   (= :version))
-  ctypes-foreign)
+   (= :version)))
  (tags
   (bindings bpf libbpf)))
