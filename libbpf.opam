@@ -16,6 +16,7 @@ depends: [
   "ppx_deriving"
   "ppx_expect"
   "conf-libbpf"
+  "conf-bpftool"
   "conf-clang"
   "odoc" {with-doc}
 ]

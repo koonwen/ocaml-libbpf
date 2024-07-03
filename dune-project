@@ -38,6 +38,7 @@
   ppx_deriving
   ppx_expect
   conf-libbpf
+  conf-bpftool
   conf-clang) ; This is only a dependency for the examples directory
               ; to show how to use dune to build bpf programs, it is
               ; not part of the library bindings, however, we can't
