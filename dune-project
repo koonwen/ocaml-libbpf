@@ -18,7 +18,12 @@
 (package
  (allow_empty)
  (name conf-libbpf)
- (synopsis "System installation of libbpf"))
+ (synopsis "Virtual package for system installation of libbpf"))
+
+(package
+ (allow_empty)
+ (name conf-bpftool)
+ (synopsis "Virtual package for system installation of bpftool"))
 
 (package
  (name libbpf)
@@ -32,8 +37,11 @@
    (>= 0.22.0))
   ppx_deriving
   ppx_expect
-  conf-zlib
-  conf-clang)
+  conf-libbpf
+  conf-clang) ; This is only a dependency for the examples directory
+              ; to show how to use dune to build bpf programs, it is
+              ; not part of the library bindings, however, we can't
+              ; remove it since it builds alongside the library
  (tags
   (bindings bpf libbpf)))
 

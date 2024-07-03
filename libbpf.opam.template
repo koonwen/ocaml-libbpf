@@ -1,21 +1,7 @@
 # eBPF features by kernel version https://github.com/iovisor/bcc/blob/master/docs/kernel-versions.md
 # Fix to kernel >= 6.1 to provide bound BPF map types
 available: [ os = "linux" &
-	   (( os-distribution = "debian" & os-version >= "12" )    |      # Linux 6.1
- 	    ( os-distribution = "ubuntu" & os-version >= "23.04" ) |      # Linux 6.2
-	    ( os-distribution = "fedora" & os-version >= "38" )    |      # Linux 6.2
-	    ( os-distribution = "opensuse-leap" & os-version >= "15.6" )) # Linux 6.4
+	   (( os-distribution = "debian" & os-version >= "12" )    # Linux 6.1 & Libbpf 1.1.0
+ 	   |( os-distribution = "ubuntu" & os-version >= "23.04" ) # Linux 6.2 & Libbpf 1.1.0
+	   |( os-distribution = "fedora" & os-version >= "38" ))   # Linux 6.2 & Libbpf 1.1.0
 	   ]
-
-# Need to extend to the rest of the linux distros
-depexts: [
-  # libbpf headers and library archive
-  ["libbpf-dev"] { os-distribution = "ubuntu"     # 1.1.0
-                 | os-distribution = "debian" }   # 1.1.0
-  ["libbpf-devel"] {os-distribution = "fedora"    # 1.1.0
-  		  | os-distribution = "opensuse"} # 1.2.2
-
-  # bpftool to generate vmlinux.h
-  [ "linux-tools-common" ] {os-distribution = "ubuntu"}
-  ["bpftool"] {os-distribution = "debian" | "fedora" | "opensuse-leap" }
-]
