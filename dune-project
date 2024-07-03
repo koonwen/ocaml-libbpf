@@ -1,18 +1,11 @@
 (lang dune 3.13)
 
 (name libbpf)
-
-(generate_opam_files true)
-
 (source
  (github koonwen/ocaml-libbpf))
-
 (authors "Lee Koon Wen")
-
 (maintainers "Lee Koon Wen")
-
 (license ISC BSD-3-Clause)
-
 (documentation https://koonwen.github.io/ocaml-libbpf)
 
 (package
@@ -39,10 +32,11 @@
   ppx_expect
   conf-libbpf
   conf-bpftool
-  conf-clang) ; This is only a dependency for the examples directory
-              ; to show how to use dune to build bpf programs, it is
-              ; not part of the library bindings, however, we can't
-              ; remove it since it builds alongside the library
+  conf-clang)
+ ; This is only a dependency for the examples directory
+ ; to show how to use dune to build bpf programs, it is
+ ; not part of the library bindings, however, we can't
+ ; remove it since it builds alongside the library
  (tags
   (bindings bpf libbpf)))
 
@@ -55,7 +49,7 @@
    (>= 0.22.0))
   (ctypes-foreign
    (>= 0.22.0))
-  (ocaml_libbpf
+  (libbpf
    (= :version)))
  (tags
   (bindings bpf libbpf)))

@@ -1,7 +1,0 @@
-available: [ os = "linux" ]
-
-depexts: [
-  [ "linux-tools-common" ] {os-distribution = "ubuntu"}
-  [ "bpftool" ]            {os-distribution = "debian"}
-  [ "bpftool" ]		   {os-distribution = "fedora"}
-]

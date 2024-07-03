@@ -1,7 +1,0 @@
-available: [ os = "linux" ]
-
-depexts: [
-  ["libbpf-dev"]   { os-distribution = "ubuntu" & os-version >= "18.04" }
-  ["libbpf-dev"]   { os-distribution = "debian" & os-version >= "9.0" }
-  ["libbpf-devel"] { os-distribution = "fedora" & os-version >= "38" }
-]
