@@ -1,4 +1,4 @@
-open Ocaml_libbpf
+open Libbpf
 
 let obj_path = "kprobe.bpf.o"
 let program_names = [ "do_unlinkat"; "do_unlinkat_exit" ]

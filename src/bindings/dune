@@ -1,12 +1,12 @@
 (library
  (name c_type_description)
- (public_name ocaml_libbpf.c_type_description)
+ (public_name libbpf.c_type_description)
  (libraries ctypes)
  (modules c_type_description))
 
 (rule
  (target c_types_generated.ml)
- (deps ../stubgen/gen_type_bindings_from_c.exe)
+ (deps stubgen/gen_type_bindings_from_c.exe)
  (action
   (with-stdout-to
    %{target}
@@ -14,22 +14,34 @@
 
 (library
  (name c_function_description)
- (public_name ocaml_libbpf.c_function_description)
+ (public_name libbpf.c_function_description)
  (libraries ctypes c_type_description)
  (modules c_types_generated c_function_description))
 
 (rule
  (target c_function_generated.ml)
- (deps ../stubgen/gen_function_bindings.exe)
+ (deps stubgen/gen_function_bindings.exe)
  (action
   (with-stdout-to
    %{target}
    (run %{deps} ml))))
 
+(rule
+ (target bpf_stubs.c)
+ (deps stubgen/gen_function_bindings.exe)
+ (action
+  (with-stdout-to
+   %{target}
+   (run %{deps} c))))
+
 ; This is just a level of indirection to organize functions and type bindings
 
 (library
  (name c)
- (public_name ocaml_libbpf.c)
+ (public_name libbpf.c)
+ (c_library_flags -lbpf)
+ (foreign_stubs
+  (language c)
+  (names bpf_stubs))
  (libraries c_function_description)
  (modules c c_function_generated))

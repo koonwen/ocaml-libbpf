@@ -1,4 +1,4 @@
-open Ocaml_libbpf
+open Libbpf
 
 let obj_path = "minimal.bpf.o"
 let program_names = [ "handle_tp" ]

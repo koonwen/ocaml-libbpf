@@ -3,7 +3,7 @@
    `sudo cat /sys/kernel/debug/tracing/trace_pipe` and run `ping
    127.0.0.1` to see the output *)
 open Ctypes
-open Ocaml_libbpf
+open Libbpf
 
 let obj_path = "tc.bpf.o"
 let program_name = "tc_ingress"

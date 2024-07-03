@@ -1,4 +1,4 @@
-open Ocaml_libbpf
+open Libbpf
 open Ctypes
 
 module RingBuffer = struct

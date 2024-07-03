@@ -1,17 +1,4 @@
-(rule
- (target libbpf_stubs.c)
- (deps stubgen/gen_function_bindings.exe)
- (action
-  (with-stdout-to
-   %{target}
-   (run %{deps} c))))
-
 (library
- (name ocaml_libbpf)
- (public_name ocaml_libbpf)
- (c_library_flags -lbpf -lelf -lz)
- (foreign_stubs
-  (language c)
-  (names libbpf_stubs))
- (libraries ctypes.stubs c)
- (modules ocaml_libbpf))
+ (name libbpf)
+ (public_name libbpf)
+ (libraries c))

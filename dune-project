@@ -1,6 +1,6 @@
 (lang dune 3.13)
 
-(name ocaml_libbpf)
+(name libbpf)
 
 (generate_opam_files true)
 
@@ -16,7 +16,12 @@
 (documentation https://koonwen.github.io/ocaml-libbpf)
 
 (package
- (name ocaml_libbpf)
+ (allow_empty)
+ (name conf-libbpf)
+ (synopsis "System installation of libbpf"))
+
+(package
+ (name libbpf)
  (synopsis "Libbpf bindings")
  (description "Wrapped libbpf api's for writing BPF user programs in OCaml")
  (depends
@@ -33,7 +38,7 @@
   (bindings bpf libbpf)))
 
 (package
- (name ocaml_libbpf_maps)
+ (name libbpf_maps)
  (synopsis "Libbpf maps API")
  (description "High level API's for interacting with BPF maps in OCaml")
  (depends

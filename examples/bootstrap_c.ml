@@ -1,5 +1,5 @@
-module F = Ocaml_libbpf.C.Functions
-module T = Ocaml_libbpf.C.Types
+module F = Libbpf.C.Functions
+module T = Libbpf.C.Types
 
 let bpf_obj_path = "bootstrap.bpf.o"
 let program_names = [ "handle_exec"; "handle_exit" ]

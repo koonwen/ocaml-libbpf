@@ -1,4 +1,0 @@
-(library
- (public_name ocaml_libbpf_maps)
- (name ocaml_libbpf_maps)
- (libraries ocaml_libbpf ctypes.foreign))

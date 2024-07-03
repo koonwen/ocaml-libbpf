@@ -1,0 +1,4 @@
+(library
+ (public_name libbpf_maps)
+ (name libbpf_maps)
+ (libraries libbpf ctypes.foreign))

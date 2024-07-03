@@ -1,5 +1,5 @@
-open Ocaml_libbpf
-open Ocaml_libbpf_maps
+open Libbpf
+open Libbpf_maps
 open Ctypes
 
 let obj_path = "bootstrap.bpf.o"
