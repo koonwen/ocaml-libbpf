@@ -22,7 +22,7 @@ of currently bound API's. Contributions are welcome.
 ocaml-libbpf depends on the system package of `libbpf`.
 
 # Usage
-> :warning **Disambiguation:"** The name of this repository and
+> ⚠️ **Disambiguation:** The name of this repository and
 > references to it will be "ocaml-libbpf". However, the library's
 > entry module and package name is **Libbpf**. To install it, you
 > would use `opam install libbpf`. To access it's High-level API's use
