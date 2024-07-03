@@ -19,22 +19,28 @@ The full API set of Libbpf is quite large, see [supported](supported.json) for t
 of currently bound API's. Contributions are welcome.
 
 ### External dependencies
-ocaml\_libbpf depends on the system package of `libbpf`. This is
-automatically installed along with ocaml_libbpf
+ocaml-libbpf depends on the system package of `libbpf`.
 
 # Usage
-See `examples` directory on how ocaml\_libbpf can be used to load eBPF
+> :warning **Disambiguation:"** The name of this repository and
+> references to it will be "ocaml-libbpf". However, the library's
+> entry module and package name is **Libbpf**. To install it, you
+> would use `opam install libbpf`. To access it's High-level API's use
+> `Libbpf.<api>`. To use the raw bindings, they are exposed in
+> `Libbpf.C.<api>` namespace.
+
+See `examples` directory on how ocaml-libbpf can be used to load eBPF
 ELF files into the kernel and interact with the loaded kernel program.
 The eBPF kernel programs are defined in *.bpf.c source files and are
-compiled with clang as specified in the `dune` rules. ocaml\_libbpf
-exposes some high-level API's provided in ocaml\_libbpf make it easy
-to perform repetitive tasks like
-open/load/linking/initializing/teardown.
+compiled with clang as specified in the `dune` rules. ocaml-libbpf
+exposes some high-level API's exposed by the toplevel `Libbpf` module
+to make it easy to perform repetitive tasks such as
+open/load/linking/initializing/teardown of bpf programs.
 
 To run these examples, clone this repository and set up the package with
 ```bash
 git clone git@github.com:koonwen/ocaml-libbpf.git
-cd ocaml_libbpf
+cd ocaml-libbpf
 opam install . --deps-only
 eval $(opam env)
 ```
@@ -46,10 +52,10 @@ repository and rewritten in OCaml.
 
 ### Open/Load/Link
 Now let's run through an example of how we would use
-ocaml\_libbpf. This usage tutorial assumes some knowledge of how to
+ocaml-libbpf. This usage tutorial assumes some knowledge of how to
 write eBPF kernel programs in C compile them to ELF files. If not, you
 can check out this
-[resource](https://nakryiko.com/posts/libbpf-bootstrap/#the-bpf-side). ocaml\_libbpf
+[resource](https://nakryiko.com/posts/libbpf-bootstrap/#the-bpf-side). ocaml-libbpf
 provides an easy API to install your eBPF program into the kernel. Say
 your eBPF kernel program looks like this where we print something
 whenever the syscall `write` event occurs. We also want to implement a
@@ -59,9 +65,9 @@ like a holder for our global variable. The BPF map is neccessary to
 because it allows us to communicate values between user and kernel
 space.
 
-> libbpf in fact already supports declarations of global variables in
-> the usual form with the ability to manage them in user
-> space. However for various technical reasons, ocaml\_libbpf does not
+> The libbpf C library in fact already supports declarations of global
+> variables in the usual form with the ability to manage them in user
+> space. However for various technical reasons, ocaml-libbpf does not
 > enable that feature yet. So we use the old style of working with
 > global variables here.
 
@@ -111,6 +117,8 @@ program refers to the function identifier under the SEC(...)
 attribute, in this case it is "handle_tp".
 
 ```ocaml
+open Libbpf
+
 let obj_path = "minimal.bpf.o"
 let program_names = [ "handle_tp" ]
 
@@ -123,7 +131,7 @@ let () =
 	)
 ```
 
-The API provided by ocaml\_libbpf `with_bpf_object_open_load_link` is
+The API provided by ocaml-libbpf `with_bpf_object_open_load_link` is
 a context manager that ensures the proper cleanup of resources if a
 failure is encountered. Right now our loaded kernel program is
 attached to the kernel and then immediately unloaded, users are
@@ -188,17 +196,17 @@ Put together in [minimal.ml](./examples/minimal.ml), your bpf program
 runs in kernel and print to the trace pipe every second.
 
 ### Maps
-`ocaml_libbpf_maps` is an optional convenience package that provides
+`libbpf_maps` is an optional convenience package that provides
 wrappers for BPF maps. Currently only Ringbuffer maps are added. An
 example usage of them can be found in
 [examples/bootstrap.ml](./examples/bootstrap.ml). This has been
 packaged separately since it drags in `libffi` dependency.
 
 ## Notes on compatibility
-> Libbpf is designed to be kernel-agnostic and work across multitude
-> of kernel versions. It has built-in mechanisms to gracefully handle
-> older kernels, that are missing some of the features, by working
-> around or gracefully degrading functionality.
+> The libbpf C library is designed to be kernel-agnostic and work
+> across multitude of kernel versions. It has built-in mechanisms to
+> gracefully handle older kernels, that are missing some of the
+> features, by working around or gracefully degrading functionality.
 
 Vendoring libbpf was a option. However, since bpf programs require
 writing the kernel components that may use libbpf, we made the choice
@@ -209,4 +217,4 @@ that package libbpf.v.1.1 and up. Check ocaml-ci for the list of
 operating systems that successfully builds.
 
 If so desired, you can also checkout the `vendored` branch in this
-repo which builds ocaml_libbpf with the latest libbpf package.
+repo which builds ocaml-libbpf with the latest libbpf package.
