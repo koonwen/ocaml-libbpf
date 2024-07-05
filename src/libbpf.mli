@@ -1,4 +1,8 @@
+(** See {!page-index} for example usage *)
+
 open Ctypes
+
+(** Entry point for the underlying C primatives *)
 module C : module type of C
 
 val major_version : int

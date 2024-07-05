@@ -1,5 +1,5 @@
 open Libbpf
-(** Ocaml_libbpf_maps provide a convenient API's for handling maps,
+(** Libbpf_maps provide a convenient API's for handling maps,
     currently only Ringbuffers are supported *)
 
 module RingBuffer : sig

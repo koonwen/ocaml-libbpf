@@ -1,0 +1,151 @@
+{0 ocaml-libbpf}
+
+OCaml bindings to {{:https://github.com/libbpf/libbpf}libbpf} C
+library for loading eBPF programs into the linux kernel.
+
+{1 Introduction}
+
+Writing eBPF programs consist of two distinct parts. Implementing the
+code that executes in-kernel and user-level code responsible for
+loading/initializing/linking/teardown of the in-kernel code. This
+OCaml library provides the latter via binding the C libbpf library. It
+exposes both the raw low-level bindings as well as a set of high-level
+API's for handling your eBPF objects. As of now, the kernel part must
+still be written in
+{{:https://stackoverflow.com/questions/57688344/what-is-not-allowed-in-restricted-c-for-ebpf}
+restricted C} and compiled with llvm to eBPF bytecode.
+
+For the high-level APIs: {!Libbpf}
+
+For the low-level bindings: {!Libbpf.C}.
+
+{1:Tutorial Tutorial}
+
+This example assumes the user has knowledge of how to implement the
+kernel part of a eBPF program. If not, you can check out this
+{{:https://nakryiko.com/posts/libbpf-bootstrap/#the-bpf-side}
+resource} first. Consider the following kernel eBPF program named {b
+minimal.bpf.c}:
+
+{@c[
+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+/* Copyright (c) 2020 Facebook */
+#include <linux/bpf.h>
+#include "bpf/bpf_helpers.h" /* This is from our libbpf library */
+
+char LICENSE[] SEC("license") = "Dual BSD/GPL";
+
+/* Globals implemented as an array */
+struct {
+  __uint(type, BPF_MAP_TYPE_ARRAY);
+  __uint(max_entries, 1);
+  __type(key, int);
+  __type(value, long);
+} globals SEC(".maps");
+
+int my_pid_index = 0;
+
+SEC("tp/syscalls/sys_enter_write")
+int handle_tp(void *ctx) {
+  int pid = bpf_get_current_pid_tgid() >> 32;
+
+  long *my_pid;
+  my_pid = bpf_map_lookup_elem(&globals, &my_pid_index);
+  if (my_pid == NULL) {
+    bpf_printk("Error got NULL");
+    return 1;
+  };
+
+  if (pid != *my_pid)
+    return 0;
+
+  bpf_printk("Hello, BPF triggered from PID %d", pid);
+
+  return 0;
+}
+]}
+
+After compilation to eBPF ELF file as {b "minimal.o"}. Users just need
+to provide the path to this ELF file along with the name of the
+program and optionally an initialization function. Note that the name
+of the program refers to the function identifier under the SEC(...)
+attribute, in this case it is {b "handle_tp"}.
+
+{@ocaml[
+open Libbpf
+
+let obj_path = "minimal.bpf.o"
+let program_names = [ "handle_tp" ]
+
+let () =
+  with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
+    (fun obj link -> (* Do something *))
+]}
+
+The context manager {{!Libbpf.with_bpf_object_open_load_link}
+with_bpf_object_open_load_link} is a convenience wrapper for all the
+neccessary steps to load up your eBPF program into the kernel.
+
+If we don't specify anything in the body of the function marked with
+{b (* Do something *)}, our loaded kernel program will be unloaded
+immediately. In this case, we will add some looping logic to keep the
+program running in the kernel and add a set of signal handlers to
+escape the loop.
+
+{@ocaml[
+let obj_path = "minimal.bpf.o"
+let program_names = [ "handle_tp" ]
+
+let () =
+  with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
+    (fun obj link ->
+
+	(* Set up signal handlers *)
+      let exitting = ref true in
+      let sig_handler = Sys.Signal_handle (fun _ -> exitting := false) in
+      Sys.(set_signal sigint sig_handler);
+      Sys.(set_signal sigterm sig_handler);
+
+      Printf.printf
+        "Successfully started! Please run `sudo cat \
+         /sys/kernel/debug/tracing/trace_pipe` to see output of the BPF \
+         programs.\n\
+         %!"
+
+	 (* Loop until Ctrl-C is called *)
+      while !exitting do
+        Printf.eprintf ".%!";
+        Unix.sleepf 1.0
+      done)
+]}
+
+Our bpf program is now running in the kernel until we decide to
+interrupt it. However, it doesn't do exactly what we want. In
+particular, it doesn't filter for our process PID. This is because we
+haven't loaded our process PID into the BPF map. To do this, we need
+the name of the map we declared by our {b minimal.bpf.c} program. In
+this case, our BPF array map was named {b globals}.
+
+{@ocaml[
+let map = "globals"
+
+(* Load PID into BPF map *)
+let before_link obj =
+  let pid = Unix.getpid () |> Signed.Long.of_int in
+  let global_map = bpf_object_find_map_by_name obj map in
+  (* When updating an element, users need to specify the type of the key and value
+     declared by the map which checks that the key and value size are consistent. *)
+  bpf_map_update_elem ~key_ty:Ctypes.int ~val_ty:Ctypes.long global_map 0 pid
+]}
+
+Now if we combine the two, we can run this program and see the output
+interactively being printed to the trace pipe.
+
+{1 Notice!}
+
+root permissions are required when you run eBPF programs. This is a
+consequence of the fact that they are loaded into the kernel. To offer
+some assurance though, eBPF programs always have to pass through a
+verifier before they can be loaded. This ensures that eBPF programs
+aren't able crash to crash the kernel. For more information, read
+{{:https://ebpf.io/what-is-ebpf/#ebpf-safety} here}.

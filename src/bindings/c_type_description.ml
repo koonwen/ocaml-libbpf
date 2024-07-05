@@ -1,4 +1,7 @@
-open! Ctypes
+open Ctypes
+
+(** You probably don't mean to be looking into this section, it is
+    part of the stub generation process of the bindings.*)
 
 module Types (F : Ctypes.TYPE) = struct
   open F
