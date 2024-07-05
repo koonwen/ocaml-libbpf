@@ -1,2 +1,74 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><title>index (libbpf.index)</title><meta charset="utf-8"/><link rel="stylesheet" href="../odoc.support/odoc.css"/><meta name="generator" content="odoc 2.4.2"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><script src="../odoc.support/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body class="odoc"><nav class="odoc-nav"><a href="../index.html">Up</a> – libbpf</nav><header class="odoc-preamble"><h1 id="libbpf-index"><a href="#libbpf-index" class="anchor"></a>libbpf index</h1></header><nav class="odoc-toc"><ul><li><a href="#library-libbpf">Library libbpf</a></li><li><a href="#library-libbpf.c">Library libbpf.c</a></li><li><a href="#library-libbpf.c_function_description">Library libbpf.c_function_description</a></li><li><a href="#library-libbpf.c_type_description">Library libbpf.c_type_description</a></li></ul></nav><div class="odoc-content"><h2 id="library-libbpf"><a href="#library-libbpf" class="anchor"></a>Library libbpf</h2><p>The entry point of this library is the module: <a href="Libbpf/index.html"><code>Libbpf</code></a>.</p><h2 id="library-libbpf.c"><a href="#library-libbpf.c" class="anchor"></a>Library libbpf.c</h2><p>The entry point of this library is the module: <a href="C/index.html"><code>C</code></a>.</p><h2 id="library-libbpf.c_function_description"><a href="#library-libbpf.c_function_description" class="anchor"></a>Library libbpf.c_function_description</h2><p>The entry point of this library is the module: <a href="C_function_description/index.html"><code>C_function_description</code></a>.</p><h2 id="library-libbpf.c_type_description"><a href="#library-libbpf.c_type_description" class="anchor"></a>Library libbpf.c_type_description</h2><p>The entry point of this library is the module: <a href="C_type_description/index.html"><code>C_type_description</code></a>.</p></div></body></html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>index (libbpf.index)</title><meta charset="utf-8"/><link rel="stylesheet" href="../odoc.support/odoc.css"/><meta name="generator" content="odoc 2.4.2"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><script src="../odoc.support/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body class="odoc"><nav class="odoc-nav"><a href="../index.html">Up</a> – libbpf</nav><header class="odoc-preamble"><h1 id="ocaml-libbpf"><a href="#ocaml-libbpf" class="anchor"></a>ocaml-libbpf</h1><p>OCaml bindings to <a href="https://github.com/libbpf/libbpf">libbpf</a> C library for loading eBPF programs into the linux kernel.</p></header><nav class="odoc-toc"><ul><li><a href="#introduction">Introduction</a></li><li><a href="#Tutorial">Tutorial</a></li><li><a href="#notice!">Notice!</a></li></ul></nav><div class="odoc-content"><h2 id="introduction"><a href="#introduction" class="anchor"></a>Introduction</h2><p>Writing eBPF programs consist of two distinct parts. Implementing the code that executes in-kernel and user-level code responsible for loading/initializing/linking/teardown of the in-kernel code. This OCaml library provides the latter via binding the C libbpf library. It exposes both the raw low-level bindings as well as a set of high-level API's for handling your eBPF objects. As of now, the kernel part must still be written in <a href="https://stackoverflow.com/questions/57688344/what-is-not-allowed-in-restricted-c-for-ebpf">restricted C</a> and compiled with llvm to eBPF bytecode.</p><p>For the high-level APIs: <a href="Libbpf/index.html"><code>Libbpf</code></a></p><p>For the low-level bindings: <a href="Libbpf/C/index.html"><code>Libbpf.C</code></a>.</p><h2 id="Tutorial"><a href="#Tutorial" class="anchor"></a>Tutorial</h2><p>This example assumes the user has knowledge of how to implement the kernel part of a eBPF program. If not, you can check out this <a href="https://nakryiko.com/posts/libbpf-bootstrap/#the-bpf-side">resource</a> first. Consider the following kernel eBPF program named <b>minimal.bpf.c</b>:</p><pre class="language-c"><code>// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+/* Copyright (c) 2020 Facebook */
+#include &lt;linux/bpf.h&gt;
+#include &quot;bpf/bpf_helpers.h&quot; /* This is from our libbpf library */
+
+char LICENSE[] SEC(&quot;license&quot;) = &quot;Dual BSD/GPL&quot;;
+
+/* Globals implemented as an array */
+struct {
+  __uint(type, BPF_MAP_TYPE_ARRAY);
+  __uint(max_entries, 1);
+  __type(key, int);
+  __type(value, long);
+} globals SEC(&quot;.maps&quot;);
+
+int my_pid_index = 0;
+
+SEC(&quot;tp/syscalls/sys_enter_write&quot;)
+int handle_tp(void *ctx) {
+  int pid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+
+  long *my_pid;
+  my_pid = bpf_map_lookup_elem(&amp;globals, &amp;my_pid_index);
+  if (my_pid == NULL) {
+    bpf_printk(&quot;Error got NULL&quot;);
+    return 1;
+  };
+
+  if (pid != *my_pid)
+    return 0;
+
+  bpf_printk(&quot;Hello, BPF triggered from PID %d&quot;, pid);
+
+  return 0;
+}</code></pre><p>After compilation to eBPF ELF file as <b>&quot;minimal.o&quot;</b>. Users just need to provide the path to this ELF file along with the name of the program and optionally an initialization function. Note that the name of the program refers to the function identifier under the SEC(...) attribute, in this case it is <b>&quot;handle_tp&quot;</b>.</p><pre class="language-ocaml"><code>open Libbpf
+
+let obj_path = &quot;minimal.bpf.o&quot;
+let program_names = [ &quot;handle_tp&quot; ]
+
+let () =
+  with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
+    (fun obj link -&gt; (* Do something *))</code></pre><p>The context manager <a href="Libbpf/index.html#val-with_bpf_object_open_load_link" title="Libbpf.with_bpf_object_open_load_link">with_bpf_object_open_load_link</a> is a convenience wrapper for all the neccessary steps to load up your eBPF program into the kernel.</p><p>If we don't specify anything in the body of the function marked with <b>(* Do something *)</b>, our loaded kernel program will be unloaded immediately. In this case, we will add some looping logic to keep the program running in the kernel and add a set of signal handlers to escape the loop.</p><pre class="language-ocaml"><code>let obj_path = &quot;minimal.bpf.o&quot;
+let program_names = [ &quot;handle_tp&quot; ]
+
+let () =
+  with_bpf_object_open_load_link ~obj_path ~program_names ~before_link
+    (fun obj link -&gt;
+
+	(* Set up signal handlers *)
+      let exitting = ref true in
+      let sig_handler = Sys.Signal_handle (fun _ -&gt; exitting := false) in
+      Sys.(set_signal sigint sig_handler);
+      Sys.(set_signal sigterm sig_handler);
+
+      Printf.printf
+        &quot;Successfully started! Please run `sudo cat \
+         /sys/kernel/debug/tracing/trace_pipe` to see output of the BPF \
+         programs.\n\
+         %!&quot;
+
+	 (* Loop until Ctrl-C is called *)
+      while !exitting do
+        Printf.eprintf &quot;.%!&quot;;
+        Unix.sleepf 1.0
+      done)</code></pre><p>Our bpf program is now running in the kernel until we decide to interrupt it. However, it doesn't do exactly what we want. In particular, it doesn't filter for our process PID. This is because we haven't loaded our process PID into the BPF map. To do this, we need the name of the map we declared by our <b>minimal.bpf.c</b> program. In this case, our BPF array map was named <b>globals</b>.</p><pre class="language-ocaml"><code>let map = &quot;globals&quot;
+
+(* Load PID into BPF map *)
+let before_link obj =
+  let pid = Unix.getpid () |&gt; Signed.Long.of_int in
+  let global_map = bpf_object_find_map_by_name obj map in
+  (* When updating an element, users need to specify the type of the key and value
+     declared by the map which checks that the key and value size are consistent. *)
+  bpf_map_update_elem ~key_ty:Ctypes.int ~val_ty:Ctypes.long global_map 0 pid</code></pre><p>Now if we combine the two, we can run this program and see the output interactively being printed to the trace pipe.</p><h2 id="notice!"><a href="#notice!" class="anchor"></a>Notice!</h2><p>root permissions are required when you run eBPF programs. This is a consequence of the fact that they are loaded into the kernel. To offer some assurance though, eBPF programs always have to pass through a verifier before they can be loaded. This ensures that eBPF programs aren't able crash to crash the kernel. For more information, read <a href="https://ebpf.io/what-is-ebpf/#ebpf-safety">here</a>.</p></div></body></html>
