@@ -1,3 +1,6 @@
+## v0.1.1 (2024-07-05)
+- Improve documentation
+
 ## v0.1.0 (2024-07-01)
 - Initial release.
 
