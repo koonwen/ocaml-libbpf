@@ -2,8 +2,8 @@
 
 open Ctypes
 
-(** Entry point for the underlying C primatives *)
 module C : module type of C
+(** Entry point for the underlying C primatives *)
 
 val major_version : int
 val minor_version : int
