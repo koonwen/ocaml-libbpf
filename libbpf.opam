@@ -41,4 +41,5 @@ available: [ os = "linux" &
 	   (( os-distribution = "debian" & os-version >= "12" )    # Linux 6.1 & Libbpf 1.1.0
  	   |( os-distribution = "ubuntu" & os-version >= "23.04" ) # Linux 6.2 & Libbpf 1.1.0
 	   |( os-distribution = "fedora" & os-version >= "38" ))   # Linux 6.2 & Libbpf 1.1.0
+	   |( os-distribution = "nixos" )
 	   ]
