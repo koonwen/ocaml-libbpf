@@ -406,4 +406,14 @@ module Types (F : Ctypes.TYPE) = struct
     let parent = uint32_t -: "parent"
     let () = seal hook
   end
+
+  module Bpf_xdp = struct
+    module Attach_opts = struct
+      let t : [ `Attach_opts ] structure typ = structure "bpf_xdp_attach_opts"
+      let ( -: ) ty label = field t label ty
+      let sz = size_t -: "sz"
+      let old_prog_fd = int -: "old_prog_fd"
+      let () = seal t
+    end
+  end
 end

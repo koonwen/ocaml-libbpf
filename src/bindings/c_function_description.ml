@@ -281,4 +281,14 @@ module Functions (F : Ctypes.FOREIGN) = struct
       to sleep until data is available in the ring(s) *)
   let ring_buffer__epoll_fd =
     foreign "ring_buffer__epoll_fd" (ptr Types.ring_buffer @-> returning int)
+
+  let bpf_xdp_attach =
+    foreign "bpf_xdp_attach"
+      (int @-> int @-> uint32_t
+      @-> ptr Types.Bpf_xdp.Attach_opts.t
+      @-> returning int)
+
+  let bpf_xdp_detach =
+    foreign "bpf_xdp_detach"
+      (int @-> uint32_t @-> ptr Types.Bpf_xdp.Attach_opts.t @-> returning int)
 end
