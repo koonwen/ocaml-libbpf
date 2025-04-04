@@ -223,6 +223,17 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_map__delete_elem"
       (ptr Types.bpf_map @-> ptr void @-> size_t @-> uint64_t @-> returning int)
 
+  (* ================================== Xdp ================================== *)
+  let bpf_xdp_attach =
+    foreign "bpf_xdp_attach"
+      (int @-> int @-> uint32_t
+      @-> ptr Types.Bpf_xdp.Attach_opts.t
+      @-> returning int)
+
+  let bpf_xdp_detach =
+    foreign "bpf_xdp_detach"
+      (int @-> uint32_t @-> ptr Types.Bpf_xdp.Attach_opts.t @-> returning int)
+
   (* ================================== Traffic control ================================== *)
 
   let bpf_tc_hook_create =

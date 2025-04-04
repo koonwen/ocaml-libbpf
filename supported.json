@@ -1,4 +1,8 @@
 {
+  "ocaml_libbpf.1.1": [
+    "bpf_xdp_attach",
+    "bpf_xdp_detach"
+  ],
   "ocaml_libbpf.1.0": [
     "libbpf_major_version",
     "libbpf_minor_version",

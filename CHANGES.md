@@ -1,5 +1,8 @@
 ## v0.1.1 (2024-07-05)
 - Improve documentation
+- Add XDP support (@Hevienz)
+  - `bpf_xdp_attach`
+  - `bpf_xdp_detach`
 
 ## v0.1.0 (2024-07-01)
 - Initial release.
