@@ -8,6 +8,7 @@ let ifindex = 1 (* Usually localhost *)
 let load_and_attach_xdp ifindex =
   (* Load the compiled eBPF object *)
   let obj = bpf_object_open obj_path in
+  let _ = bpf_object_load obj in
   let program = bpf_object_find_program_by_name obj program_name in
   let fd = bpf_program_fd program in
 
