@@ -1,5 +1,5 @@
 (executables
- (names tc bootstrap bootstrap_c kprobe minimal)
+ (names tc bootstrap bootstrap_c kprobe minimal xdp_counter)
  (libraries libbpf libbpf_maps))
 
 ; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
@@ -21,6 +21,15 @@
  (action
   (system
    "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c kprobe.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
+
+(rule
+ (mode
+  (promote (until-clean)))
+ (targets xdp_counter.bpf.o)
+ (deps arch xdp_counter.bpf.c)
+ (action
+  (system
+   "clang -g -O2 -target bpf -I/usr/include/%{architecture}-linux-gnu/ -c xdp_counter.bpf.c  -D__TARGET_ARCH_%{read:arch}")))
 
 (rule
  (mode

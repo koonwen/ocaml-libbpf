@@ -9,6 +9,9 @@ minimal: build
 kprobe: build
 	sudo $(CWD)/kprobe.exe
 
+xdp_counter: build
+	sudo $(CWD)/xdp_counter.exe
+
 tc: build
 	sudo $(CWD)/tc.exe
 
