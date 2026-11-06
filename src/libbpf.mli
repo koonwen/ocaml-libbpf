@@ -80,9 +80,26 @@ val bpf_object_close : bpf_object -> unit
 (** [bpf_object_close obj] tearsdown [obj]. BPF maps are destroyed,
     and all the resources used by the BPF app are freed. *)
 
+type uprobe
+(** A type for user probes. *)
+
+val make_uprobe :
+  ?ret:bool ->
+  ?pid:int ->
+  name:string ->
+  path:string ->
+  offset:int ->
+  unit ->
+  uprobe
+(* Construct a userspace probe: [uname] is the name of the probe, [upath] is
+   the path to the library, [upid] is the PID to trace (0 for current process,
+   -1 for all processes), and [uoffset] is the absolute offset of the symbol
+   you want to trace. *)
+
 val with_bpf_object_open_load_link :
   obj_path:string ->
   program_names:string list ->
+  ?uprobes:uprobe list ->
   ?before_link:(bpf_object -> unit) ->
   (bpf_object -> bpf_link list -> unit) ->
   unit
