@@ -120,6 +120,15 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign "bpf_program__attach"
       (ptr Types.bpf_program @-> returning (ptr_opt Types.bpf_link))
 
+  (** [bpf_program__attach_uprobe prog kret pid path offset] attaches a BPF
+      program to the userspace function which is found by binary path and offset.
+      You can optionally specify a particular process to attach to. You can also
+      optionally attach the program to the function exit instead of entry. *)
+  let bpf_program__attach_uprobe =
+    foreign "bpf_program__attach_uprobe"
+      (ptr Types.bpf_program @-> bool @-> int @-> string @-> int
+      @-> returning (ptr_opt Types.bpf_link))
+
   let bpf_program__fd =
     foreign "bpf_program__fd" (ptr Types.bpf_program @-> returning int)
 

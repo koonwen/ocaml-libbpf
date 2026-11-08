@@ -4,6 +4,14 @@
 
 ; Below is repetitive build rules to compile *.bpf.c eBPF C source code that runs in the kernel
 
+; The default clang most Nix users will have will try to enable hardening
+; which is not supported when compiling eBPF programs.
+
+(env
+ (_
+  (env-vars
+   (NIX_HARDENING_ENABLE ""))))
+
 (rule
  (mode
   (promote (until-clean)))
@@ -57,7 +65,7 @@
   (progn
    (with-stdout-to
     vmlinux.h
-    (run /usr/sbin/bpftool btf dump file /sys/kernel/btf/vmlinux format c))
+    (run bpftool btf dump file /sys/kernel/btf/vmlinux format c))
    (with-stdout-to
     arch
     (bash

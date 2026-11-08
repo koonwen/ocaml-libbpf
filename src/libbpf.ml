@@ -67,7 +67,18 @@ let bpf_link_destroy bpf_link =
 
 let bpf_object_close bpf_object = C.Functions.bpf_object__close bpf_object
 
-let with_bpf_object_open_load_link ~obj_path ~program_names
+type uprobe = {
+  uname : string;
+  upath : string;
+  upid : int;
+  uret : bool;
+  uoffset : int;
+}
+
+let make_uprobe ?(ret = false) ?(pid = 0) ~name ~path ~offset () =
+  { uname = name; upath = path; upid = pid; uoffset = offset; uret = ret }
+
+let with_bpf_object_open_load_link ~obj_path ~program_names ?(uprobes = [])
     ?(before_link = Stdlib.ignore) fn =
   let obj = bpf_object_open obj_path in
   bpf_object_load obj;
@@ -110,10 +121,28 @@ let with_bpf_object_open_load_link ~obj_path ~program_names
         | Some prog -> (prog :: succ, fail))
       ([], []) programs
   in
-  if not_attached <> [] then (
+
+  let _uprobe_links, not_attached_uprobes =
+    List.fold_left
+      (fun (succ, fail) { uname; upath; upid; uoffset; uret } ->
+        let prog = C.Functions.bpf_object__find_program_by_name obj uname in
+        match
+          Option.map
+            (fun prog ->
+              C.Functions.bpf_program__attach_uprobe prog uret upid upath
+                uoffset)
+            prog
+        with
+        | None -> (succ, uname :: fail)
+        | Some prog -> (prog :: succ, fail))
+      ([], []) uprobes
+  in
+
+  if not_attached <> [] || not_attached_uprobes <> [] then (
     (* Detached successfully attached before shutdown *)
     cleanup ~links obj;
-    failwith_f "Failed to link %s programs" (String.concat "," not_attached));
+    failwith_f "Failed to link %s programs"
+      (String.concat "," @@ not_attached @ not_attached_uprobes));
 
   (* Run user program *)
   (try fn obj links
